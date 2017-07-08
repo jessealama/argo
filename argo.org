@@ -1,0 +1,53 @@
+* TODO Check that a JSON document is a schema
+  That involves checking that, if the validation keywords are present on a JSON object, that they have the right values
+
+  http://json-schema.org/latest/json-schema-validation.html
+** Validation keywords
+*** multipleOf
+*** maximum
+*** exclusiveMaximum
+*** minimum
+*** exclusiveMinimum
+*** maxLength
+*** minLength
+*** pattern
+*** items
+*** additionalItems
+*** maxItems
+*** minItems
+*** uniqueItems
+*** contains
+*** maxProperties
+*** minProperties
+*** required
+*** properties
+*** patternProperties
+*** additionalProperties
+*** dependencies
+*** propertyNames
+*** enum
+*** const
+*** type
+*** allOf
+*** anyOf
+*** oneOf
+*** not
+** [[http://json-schema.org/latest/json-schema-validation.html#rfc.section.7][Metadata keywords]]
+*** definitions
+*** title
+*** description
+*** default
+*** examples
+** [[http://json-schema.org/latest/json-schema-validation.html#rfc.section.8][Semantic validation keywords]]
+   For the problem of checking whether a JSON document is a JSON schema, it suffices to check that, if the format key is present, that is has one of these values.
+
+   Validating inputs against these keywords is a different problem.
+*** date-time
+*** email
+*** hostname
+*** ipv4
+*** ipv6
+*** uri
+*** uri-reference
+*** uri-template
+*** json-pointer
