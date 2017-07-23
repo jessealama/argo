@@ -1,0 +1,5 @@
+{
+    "dependencies": {
+	"prop": [ "one", "two", "one" ]
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "properties": {
+	"foo": {
+	    "type": "null"
+	}
+    },
+    "additionalProperties": {
+	"foo": {
+	    "type": "string"
+	}
+    }
+}

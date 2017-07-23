@@ -1,0 +1,10 @@
+{
+    "patternProperties": {
+	"foo": {
+	    "type": "null"
+	}
+	"fo?": {
+	    "type": "string"
+	}
+    }
+}

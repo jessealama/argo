@@ -1,0 +1,18 @@
+{
+    "properties": {
+	"dog": {
+	    "type": "string"
+	}
+    },
+    "patternProperties": {
+	"cat": {
+	    "type": "number"
+	}
+    },
+    "additionalProperties": {
+	"foo": {
+	    "type": "array",
+	    "maxLength": 2
+	}
+    }
+}

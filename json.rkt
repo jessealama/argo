@@ -43,6 +43,16 @@
 
 (provide json-boolean?)
 
+(define (json-true-value? x)
+  (eq? x #t))
+
+(provide json-true-value?)
+
+(define (json-false-value? x)
+  (eq? x #f))
+
+(provide json-false-value?)
+
 ;; assumes that x is already a jsexpr? value
 (define (json-array? x)
   (list? x))
@@ -53,10 +63,15 @@
   (check-true (json-array? (list)))
   (check-false (json-array? (hasheq))))
 
-(define (json-array-items arr)
+(define (array-items arr)
   arr)
 
-(provide json-array-items)
+(provide array-items)
+
+(define (array-length arr)
+  (length (array-items arr)))
+
+(provide array-length)
 
 ;; assumes that x is already a jsexpr? value
 (define (json-number? x)
@@ -82,21 +97,21 @@
      (check-false (json-integer? 4.1))
      (check-false (json-integer? #t))))
 
-(define (json-object-has-property? obj prop)
+(define (has-property? obj prop)
   (hash-has-key? obj prop))
 
-(provide json-object-has-property?)
+(provide has-property?)
 
-(define (json-object-property-value obj prop)
+(define (property-value obj prop)
   (hash-ref obj prop))
 
-(provide json-object-property-value)
+(provide property-value)
 
 ;; assumes x is a json-array? value
-(define (empty-json-array? x)
+(define (empty-array? x)
   (empty? x))
 
-(provide empty-json-array?)
+(provide empty-array?)
 
 (module+ test
   (test-case "Basic JSON object check"
@@ -106,15 +121,15 @@
     (check-true (json-object? (hasheq)))
     (check-true (json-object? (hasheq 'type "object")))))
 
-(define (json-object-properties obj)
+(define (object-properties obj)
   (hash-keys obj))
 
-(provide json-object-properties)
+(provide object-properties)
 
-(define (json-object-values obj)
+(define (object-values obj)
   (hash-values obj))
 
-(provide json-object-values)
+(provide object-values)
 
 (define (json-non-negative-integer? x)
   (and (json-integer? x)
@@ -134,22 +149,22 @@
             (and (json-equal? a1 b1)
                  (json-equal-arrays? as bs))))))
 
-(define (remove-json-object-property jsobj prop)
+(define (remove-property jsobj prop)
   (hash-remove jsobj prop))
 
+(provide remove-property)
+
 (define (json-equal-objects? jsobj1 jsobj2)
-  (let ([props1 (json-object-properties jsobj1)])
+  (let ([props1 (object-properties jsobj1)])
     (if (empty? props1)
-        (empty? (json-object-properties jsobj2))
+        (empty? (object-properties jsobj2))
         (let ([prop1 (first props1)])
-          (and (json-object-has-property? jsobj2 prop1)
-               (let ([val1 (json-object-property-value jsobj1 prop1)]
-                     [val2 (json-object-property-value jsobj2 prop1)])
+          (and (has-property? jsobj2 prop1)
+               (let ([val1 (property-value jsobj1 prop1)]
+                     [val2 (property-value jsobj2 prop1)])
                  (and (json-equal? val1 val2)
-                      (json-equal? (remove-json-object-property jsobj1
-                                                                prop1)
-                                   (remove-json-object-property jsobj2
-                                                                prop1)))))))))
+                      (json-equal? (remove-property jsobj1 prop1)
+                                   (remove-property jsobj2 prop1)))))))))
 
 ;; assumes that both arguments as jsexpr? values
 (define (json-equal? js1 js2)
@@ -239,3 +254,28 @@
                               (list "b" "a")))
     (check-true (json-equal? (list (list "a" "b"))
                              (list (list "a" "b"))))))
+
+(define (count-properties js)
+  (length (object-properties js)))
+
+(provide count-properties)
+
+(define (has-type? data type)
+  (unless (string? type)
+    (error "Type should be a string: " type))
+  (cond ((string=? type "null")
+         (json-null? data))
+        ((string=? type "boolean")
+         (json-boolean? data))
+        ((string=? type "number")
+         (json-number? data))
+        ((string=? type "integer")
+         (json-integer? data))
+        ((string=? type "object")
+         (json-object? data))
+        ((string=? type "array")
+         (json-array? data))
+        (else
+         (error "Unknown JSON data type: " type))))
+
+(provide has-type?)

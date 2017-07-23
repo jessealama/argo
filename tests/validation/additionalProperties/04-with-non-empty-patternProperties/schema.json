@@ -1,0 +1,14 @@
+{
+    "patternProperties": {
+	"^temperature-": {
+	    "type": "integer"
+	}
+    }
+    "additionalProperties": {
+	"foo": {
+	    "type": "number",
+	    "minimum": 4.5,
+	    "maximum": 6.0
+	}
+    }
+}

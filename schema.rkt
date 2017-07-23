@@ -13,12 +13,12 @@
                   json-object?
                   json-string?
                   json-array?
-                  empty-json-array?
-                  json-array-items
-                  json-object-has-property?
-                  json-object-property-value
-                  json-object-properties
-                  json-object-values
+                  empty-array?
+                  array-items
+                  has-property?
+                  property-value
+                  object-properties
+                  object-values
                   json-equal?)
          (only-in (file "regexp.rkt")
                   ecma-262-regexp?)
@@ -81,7 +81,7 @@
 
 (define (acceptable-value-for-items? value)
   (cond ((json-array? value)
-         (andmap json-schema? (json-array-items value)))
+         (andmap json-schema? (array-items value)))
         ((json-object? value)
          (json-schema? value))
         (else
@@ -115,14 +115,14 @@
 
 (define (acceptable-value-for-properties? value)
   (cond ((json-object? value)
-         (andmap json-schema? (json-object-values value)))
+         (andmap json-schema? (object-values value)))
         (else
          #f)))
 
 (define (acceptable-value-for-patternProperties? value)
   (cond ((json-object? value)
-         (and (andmap ecma-262-regexp? (map symbol->string (json-object-properties value)))
-              (andmap json-schema? (json-object-values value))))
+         (and (andmap ecma-262-regexp? (map symbol->string (object-properties value)))
+              (andmap json-schema? (object-values value))))
         (else
          #f)))
 
@@ -136,7 +136,7 @@
                        (and (json-array? x)
                             (andmap json-string? x)
                             (members-unique? x))))
-                 (json-object-values value)))
+                 (object-values value)))
         (else
          #f)))
 
@@ -145,7 +145,7 @@
 
 (define (acceptable-value-for-enum? value)
   (cond ((json-array? value)
-         (and (not (empty-json-array? value))
+         (and (not (empty-array? value))
               (not (check-duplicates value json-equal?))))
         (else
          #f)))
@@ -155,21 +155,21 @@
 
 (define (acceptable-value-for-allOf? value)
   (cond ((json-array? value)
-         (and (not (empty-json-array? value))
+         (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
          #f)))
 
 (define (acceptable-value-for-anyOf? value)
   (cond ((json-array? value)
-         (and (not (empty-json-array? value))
+         (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
          #f)))
 
 (define (acceptable-value-for-oneOf? value)
   (cond ((json-array? value)
-         (and (not (empty-json-array? value))
+         (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
          #f)))
@@ -180,7 +180,7 @@
 (define (acceptable-value-for-definition? value)
   (and (json-object? value)
        (andmap json-schema?
-               (json-object-values value))))
+               (object-values value))))
 
 (define (acceptable-value-for-title? value)
   (json-string? value))
@@ -282,7 +282,7 @@
         ((json-boolean? thing)
          #t)
         ((json-object? thing)
-         (let* ([properties (json-object-properties thing)]
+         (let* ([properties (object-properties thing)]
                 [checkable (intersection properties
                                          json-schema-keywords)])
            (andmap (lambda (keyword)
@@ -291,6 +291,8 @@
                    checkable)))
         (else
          #f)))
+
+(provide json-schema?)
 
 (module+ test
 
@@ -306,8 +308,8 @@
   (check-false (json-schema? (hasheq 'type #f)))
   (let ([js (hasheq 'type "object")])
     (check-true (json-object? js))
-    (check-true (json-object-has-property? js 'type))
-    (check-true (json-string? (json-object-property-value js 'type)))
+    (check-true (has-property? js 'type))
+    (check-true (json-string? (property-value js 'type)))
     (check-true (json-schema? js)))
 
   (check-false (json-schema? (hasheq 'type "foo")))
