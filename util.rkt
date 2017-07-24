@@ -3,7 +3,9 @@
 (require (only-in racket/list
                   remove-duplicates)
          (only-in racket/path
-                  path-get-extension))
+                  path-get-extension)
+         (only-in racket/port
+                  port->bytes))
 
 (module+ test
   (require rackunit))
@@ -41,3 +43,18 @@
       (filter json-path? files))))
 
 (provide json-files-in-directory)
+
+(define (file-content/bytes path)
+  (let ([p (open-input-file path)])
+    (begin0
+        (port->bytes p)
+      (close-input-port p))))
+
+(provide file-content/bytes)
+
+(define (bytes->string bstr)
+  (define (fail err) #f)
+  (with-handlers ([exn:fail:contract? fail])
+    (bytes->string/utf-8 bstr)))
+
+(provide bytes->string)
