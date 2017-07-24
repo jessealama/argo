@@ -7,22 +7,31 @@
   (require rackunit))
 
 (define (parse-json-port p)
-  (let ([js (read-json p)])
-    (when (eof-object? js)
-      (error "End-of-file reached while parsing JSON."))
-    js))
+  (define (parse-fail err) (values #f #f))
+  (with-handlers ([exn:fail:read? parse-fail])
+    (let ([js (read-json p)])
+      (cond ((eof-object? js)
+             (values #f #f))
+            (else
+             (values js #t))))))
 
 (provide parse-json-port)
 
+(define (parse-json-string str)
+  (let ([p (open-input-string str)])
+    (begin0
+        (parse-json-port p)
+      (close-input-port p))))
+
 (module+ test
-  (let* ([js "x"]
-         [p (open-input-string js)])
-    (check-exn exn:fail:read? (lambda () (parse-json-port p)))
-    (close-input-port p))
-  (let* ([js "{}"]
-         [p (open-input-string js)])
-    (check-true (jsexpr? (parse-json-port p)))
-    (close-input-port p)))
+  (let ([js "x"])
+    (let-values ([(whatever ok?) (parse-json-string js)])
+      (check-false ok?)))
+  (let ([js "{}"])
+    (let-values ([(whatever ok?) (parse-json-string js)])
+      (check-true ok?))))
+
+(provide parse-json-string)
 
 (define (parse-json-file f)
   (let ([p (open-input-file f)])
