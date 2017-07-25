@@ -20,9 +20,13 @@
   (exit 1))
 
 (module+ main
+  (define quiet-mode (make-parameter #f))
   (define-values (schema-path instance-path)
     (command-line
      #:program "argo"
+     #:once-each
+     [("--quiet") "Write nothing to stdout."
+                  (quiet-mode #f)]
      #:args (schema-path instance-path)
      (values schema-path instance-path)))
   (unless (file-exists? schema-path)
