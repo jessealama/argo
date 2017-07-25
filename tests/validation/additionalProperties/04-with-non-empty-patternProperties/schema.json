@@ -3,7 +3,7 @@
 	"^temperature-": {
 	    "type": "integer"
 	}
-    }
+    },
     "additionalProperties": {
 	"foo": {
 	    "type": "number",
