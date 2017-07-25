@@ -275,6 +275,8 @@
          (json-object? data))
         ((string=? type "array")
          (json-array? data))
+        ((string=? type "string")
+         (json-string? data))
         (else
          (error "Unknown JSON data type: " type))))
 
