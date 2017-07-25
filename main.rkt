@@ -6,6 +6,8 @@
                   bytes->string))
 (require (only-in (file "parse.rkt")
                   parse-json-string))
+(require (only-in (file "schema.rkt")
+                  json-schema?))
 (require (only-in (file "validate.rkt")
                   valid-wrt-schema?))
 (require (only-in racket/cmdline
@@ -50,6 +52,8 @@
     (complain-and-die (format "Schema at \"~a\" is not well-formed JSON." schema-path)))
   (unless instance-well-formed?
     (complain-and-die (format "Instance at \"~a\" is not well-formed JSON." instance-path)))
+  (unless (json-schema? schema/jsexpr)
+    (complain-and-die (format "Schema at \"~a\" is not a JSON schema.")))
   (exit (if (valid-wrt-schema? instance/jsexpr schema/jsexpr)
             0
             1)))
