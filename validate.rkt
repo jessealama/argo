@@ -206,32 +206,24 @@
         ((has? 'dependencies)
          (let ([deps (get 'dependencies)])
            (define (satisfies-dependency? prop dependency)
-             (let ([dependency-value (property-value deps
-                                                     dependency)])
-               (cond ((json-array? dependency-value)
-                      (or (not (has-property? data prop))
+             (or (not (has-property? deps prop))
+                 (let ([dependency-value (property-value deps prop)])
+                   (cond ((json-array? dependency-value)
                           (andmap (lambda (dep-prop)
-                                    (has-property? data
-                                                               dep-prop)))))
-                     ((json-object? dependency-value)
-                      (or (not (has-property? data prop))
-                          (valid-wrt-schema? data dependency-value)))
-                     (else
-                      (error "Unexpected non-array, non-object dependency value:" dependency-value)))))
+                                    (has-property? data dep-prop))
+                                  (array-items dependency-value)))
+                         ((json-object? dependency-value)
+                          (valid-wrt-schema? data dependency-value))
+                         (else
+                          (error "Unexpected non-array, non-object dependency value:" dependency-value))))))
            (cond ((json-object? data)
-                  (andmap (lambda (prop)
-                            (satisfies-dependency? prop
-                                                   (property-value data prop)))
-                          (object-properties data)
-                          (valid-w/o? 'properties)))
+                  (and (andmap (lambda (prop)
+                                 (satisfies-dependency? prop
+                                                        (property-value data prop)))
+                               (object-properties data))
+                       (valid-w/o? 'dependencies)))
                  (else
-                  (valid-w/o? 'properties))))
-         (if (json-object? data)
-             (let ([deps (get 'dependencies)])
-               (let ([deps-props (object-properties deps)])
-                 ;; not done
-                 #f))
-             (valid-w/o? 'dependencies)))
+                  (valid-w/o? 'dependencies)))))
         ((has? 'propertyNames)
          (let ([s (get 'propertyNames)]
                [items (object-properties data)])
