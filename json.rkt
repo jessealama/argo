@@ -1,6 +1,7 @@
 #lang racket/base
 
-(require (only-in json))
+(require (only-in json
+                  jsexpr?))
 
 (require (only-in racket/list
                   empty?
@@ -98,7 +99,21 @@
      (check-false (json-integer? #t))))
 
 (define (has-property? obj prop)
-  (hash-has-key? obj prop))
+  (cond ((symbol? prop)
+         (hash-has-key? obj prop))
+        ((string? prop)
+         (hash-has-key? obj (string->symbol prop)))
+        (else
+         #f)))
+
+(module+ test
+  (let ([obj (hasheq
+              'foo "bar")])
+    (check-true (jsexpr? obj))
+    (check-true (has-property? obj 'foo))
+    (check-true (has-property? obj "foo"))
+    (check-false (has-property? obj 'bar))
+    (check-false (has-property? obj "bar"))))
 
 (provide has-property?)
 
