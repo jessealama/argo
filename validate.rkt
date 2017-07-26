@@ -200,7 +200,7 @@
                                                     prop))))
            (cond ((json-object? data)
                   (and (andmap satisfies-property?
-                               properties)
+                               (object-properties properties))
                        (valid-w/o? 'patternProperties)))
                  (else
                   (valid-w/o? 'patternProperties)))))
