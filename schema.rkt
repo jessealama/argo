@@ -23,7 +23,14 @@
          (only-in (file "regexp.rkt")
                   ecma-262-regexp?)
          (only-in (file "util.rkt")
-                  intersection))
+                  intersection
+                  complain-and-die
+                  file-content/bytes
+                  bytes->string)
+         (only-in racket/cmdline
+                  command-line)
+         (only-in (file "parse.rkt")
+                  parse-json-string))
 
 (module+ test
   (require rackunit))
@@ -359,3 +366,27 @@
 
 (module+ test
   (check-true (json-schema? (hasheq 'type "string"))))
+
+;; Command line application for testing whether a file is
+;; a JSON Schema at all
+
+(module+ main
+  (define schema-path
+    (command-line
+     #:program "schema"
+     #:args (schema-path)
+     schema-path))
+  (unless (file-exists? schema-path)
+    (complain-and-die (format "Schema file \"~a\" does not exist." schema-path)))
+  (define (parse-fail err) #f)
+  (define schema/bytes (file-content/bytes schema-path))
+  (define schema/string (bytes->string schema/bytes))
+  (when (eq? schema/string #f)
+    (complain-and-die (format "Contents of schema at \"~a\" cannot be interpreted as a UTF-8 string." schema-path)))
+  (define-values (schema/jsexpr schema-well-formed?)
+    (parse-json-string schema/string))
+  (unless schema-well-formed?
+    (complain-and-die (format "Schema at \"~a\" is not well-formed JSON." schema-path)))
+  (exit (if (json-schema? schema/jsexpr)
+            0
+            1)))
