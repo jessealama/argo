@@ -5,4 +5,5 @@ clean:
 	find . -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' | parallel --jobs=1 $(MAKE) -C {} clean
 
 test:
-	raco test test.rkt
+	find . -mindepth 1 -maxdepth 1 -type f -name '*.json' -exec basename {} ';' | parallel --jobs=1 --halt now,fail=1 racket ../../../schema.rkt {}
+	find . -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' | parallel --jobs=1 $(MAKE) -C {} test
