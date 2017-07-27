@@ -58,3 +58,10 @@
     (bytes->string/utf-8 bstr)))
 
 (provide bytes->string)
+
+(define (complain-and-die message)
+  (display message)
+  (newline)
+  (exit 1))
+
+(provide complain-and-die)
