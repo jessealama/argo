@@ -3,7 +3,8 @@
 (require json)
 (require (only-in (file "util.rkt")
                   file-content/bytes
-                  bytes->string))
+                  bytes->string
+                  complain-and-die))
 (require (only-in (file "parse.rkt")
                   parse-json-string))
 (require (only-in (file "schema.rkt")
@@ -15,11 +16,6 @@
 
 (module+ test
   (require rackunit))
-
-(define (complain-and-die message)
-  (display message)
-  (newline)
-  (exit 1))
 
 (module+ main
   (define quiet-mode (make-parameter #f))
