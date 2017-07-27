@@ -1,0 +1,21 @@
+* Schema validation
+** Positive
+** Negative
+*** TODO maxItems
+*** TODO maxLength
+*** TODO maxProperties
+*** TODO maximum
+*** TODO minItems
+*** TODO minLength
+*** TODO minProperties
+*** TODO minimum
+*** TODO multipleOf
+*** TODO not
+*** TODO oneOf
+*** TODO pattern
+*** TODO patternProperties
+*** TODO properties
+*** TODO propertyNames
+*** TODO required
+*** TODO title
+*** TODO uniqueItems
