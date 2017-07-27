@@ -5,6 +5,4 @@ clean:
 	find . -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' | parallel --jobs=1 $(MAKE) -C {} clean
 
 test:
-	test -f schema.json
-	find positive -maxdepth 1 -mindepth 1 -type f -name '*.json' | parallel --jobs=1 --timeout 5 --halt-on-error now,fail=1 racket ../../../../main.rkt --quiet schema.json {}
-	find negative -maxdepth 1 -mindepth 1 -type f -name '*.json' | parallel --jobs=1 --timeout 5 --halt-on-error now,fail=1  "../../../../invert-exit-code.sh racket ../../../../main.rkt --quiet schema.json"
+	find . -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' | parallel --jobs=1 --halt-on-error now,fail=1 $(MAKE) -C {} test
