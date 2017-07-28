@@ -1,5 +1,39 @@
 * Schema validation
 ** Positive
+*** TODO additionalItems
+*** TODO additionalProperties
+*** TODO allOf
+*** TODO anyOf
+*** TODO const
+*** TODO contains
+*** TODO default
+*** TODO definitions
+*** TODO dependencies
+*** TODO description
+*** TODO enum
+*** TODO examples
+*** TODO exclusiveMaximum
+*** TODO exclusiveMinimum
+*** TODO format
+*** TODO items
+*** TODO maxItems
+*** TODO maxLength
+*** TODO maxProperties
+*** TODO maximum
+*** TODO minItems
+*** TODO minLength
+*** TODO minProperties
+*** TODO minimum
+*** TODO not
+*** TODO oneOf
+*** TODO pattern
+*** TODO patternProperties
+*** TODO properties
+*** TODO propertyNames
+*** TODO required
+*** TODO title
+*** TODO type
+*** TODO uniqueItems
 ** Negative
 *** TODO maxItems
 *** TODO maxLength
@@ -19,3 +53,69 @@
 *** TODO required
 *** TODO title
 *** TODO uniqueItems
+* Validation of instances
+** TODO When checking negative cases, check that the schema really is a schema
+   The invert-exit-code script is used to check that an instance does not satisfy the schema.
+
+   Not checking this could lead to false positives.
+** Validation
+*** Positive
+6.1. multipleOf
+6.2. maximum
+6.3. exclusiveMaximum
+6.4. minimum
+6.5. exclusiveMinimum
+6.6. maxLength
+6.7. minLength
+6.8. pattern
+6.9. items
+6.10. additionalItems
+6.11. maxItems
+6.12. minItems
+6.13. uniqueItems
+6.14. contains
+6.15. maxProperties
+6.16. minProperties
+6.17. required
+6.18. properties
+6.19. patternProperties
+6.20. additionalProperties
+6.21. dependencies
+6.22. propertyNames
+6.23. enum
+6.24. const
+6.25. type
+6.26. allOf
+6.27. anyOf
+6.28. oneOf
+6.29. not
+*** Negative
+6.1. multipleOf
+6.2. maximum
+6.3. exclusiveMaximum
+6.4. minimum
+6.5. exclusiveMinimum
+6.6. maxLength
+6.7. minLength
+6.8. pattern
+6.9. items
+6.10. additionalItems
+6.11. maxItems
+6.12. minItems
+6.13. uniqueItems
+6.14. contains
+6.15. maxProperties
+6.16. minProperties
+6.17. required
+6.18. properties
+6.19. patternProperties
+6.20. additionalProperties
+6.21. dependencies
+6.22. propertyNames
+6.23. enum
+6.24. const
+6.25. type
+6.26. allOf
+6.27. anyOf
+6.28. oneOf
+6.29. not
