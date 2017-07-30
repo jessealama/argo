@@ -34,6 +34,15 @@
 
 (provide json-string?)
 
+;; constructors
+
+(define (json-string x)
+  (unless (string? x)
+    (error "To make a JSON string, a Racket string is required."))
+  x)
+
+(provide json-string)
+
 ;; assumes that x is already a jsexpr? value
 (define (json-null? x)
   (eq? x 'null))
