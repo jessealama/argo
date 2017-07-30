@@ -294,7 +294,8 @@
           'title
           'description
           'default
-          'examples))
+          'examples
+          'format))
   (for ([keyword keywords])
     (check-not-false (member keyword json-schema-keywords)))
   (for ([keyword json-schema-keywords])
