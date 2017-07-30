@@ -60,62 +60,62 @@
    Not checking this could lead to false positives.
 ** Validation
 *** Positive
-6.1. multipleOf
-6.2. maximum
-6.3. exclusiveMaximum
-6.4. minimum
-6.5. exclusiveMinimum
-6.6. maxLength
-6.7. minLength
-6.8. pattern
-6.9. items
-6.10. additionalItems
-6.11. maxItems
-6.12. minItems
-6.13. uniqueItems
-6.14. contains
-6.15. maxProperties
-6.16. minProperties
-6.17. required
-6.18. properties
-6.19. patternProperties
-6.20. additionalProperties
-6.21. dependencies
-6.22. propertyNames
-6.23. enum
-6.24. const
-6.25. type
-6.26. allOf
-6.27. anyOf
-6.28. oneOf
-6.29. not
+**** TODO multipleOf
+**** TODO maximum
+**** TODO exclusiveMaximum
+**** TODO minimum
+**** TODO exclusiveMinimum
+**** TODO maxLength
+**** TODO minLength
+**** TODO pattern
+**** TODO items
+**** TODO additionalItems
+**** TODO maxItems
+**** TODO minItems
+**** TODO uniqueItems
+**** TODO contains
+**** TODO maxProperties
+**** TODO minProperties
+**** TODO required
+**** TODO properties
+**** TODO patternProperties
+**** TODO additionalProperties
+**** TODO dependencies
+**** TODO propertyNames
+**** TODO enum
+**** TODO const
+**** TODO type
+**** TODO allOf
+**** TODO anyOf
+**** TODO oneOf
+**** TODO not
 *** Negative
-6.1. multipleOf
-6.2. maximum
-6.3. exclusiveMaximum
-6.4. minimum
-6.5. exclusiveMinimum
-6.6. maxLength
-6.7. minLength
-6.8. pattern
-6.9. items
-6.10. additionalItems
-6.11. maxItems
-6.12. minItems
-6.13. uniqueItems
-6.14. contains
-6.15. maxProperties
-6.16. minProperties
-6.17. required
-6.18. properties
-6.19. patternProperties
-6.20. additionalProperties
-6.21. dependencies
-6.22. propertyNames
-6.23. enum
-6.24. const
-6.25. type
-6.26. allOf
-6.27. anyOf
-6.28. oneOf
-6.29. not
+**** TODO multipleOf
+**** TODO maximum
+**** TODO exclusiveMaximum
+**** TODO minimum
+**** TODO exclusiveMinimum
+**** TODO maxLength
+**** TODO minLength
+**** TODO pattern
+**** TODO items
+**** TODO additionalItems
+**** TODO maxItems
+**** TODO minItems
+**** TODO uniqueItems
+**** TODO contains
+**** TODO maxProperties
+**** TODO minProperties
+**** TODO required
+**** TODO properties
+**** TODO patternProperties
+**** TODO additionalProperties
+**** TODO dependencies
+**** TODO propertyNames
+**** TODO enum
+**** TODO const
+**** TODO type
+**** TODO allOf
+**** TODO anyOf
+**** TODO oneOf
+**** TODO not
