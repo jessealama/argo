@@ -7,6 +7,7 @@
          (only-in racket/list
                   check-duplicates)
          (only-in (file "json.rkt")
+                  json-string
                   json-number?
                   json-non-negative-integer?
                   json-boolean?
@@ -201,6 +202,18 @@
 (define (acceptable-value-for-examples? value)
   (json-array? value))
 
+(define (acceptable-value-for-format? value)
+  (member value
+          (list (json-string "date-time")
+                (json-string "email")
+                (json-string "hostname")
+                (json-string "ipv4")
+                (json-string "ipv6")
+                (json-string "uri")
+                (json-string "uri-reference")
+                (json-string "uri-template")
+                (json-string "json-pointer"))))
+
 (define json-schema-validators
   (hasheq 'multipleOf acceptable-value-for-multipleOf?
           'maximum acceptable-value-for-maximum?
@@ -237,7 +250,11 @@
           'title acceptable-value-for-title?
           'description acceptable-value-for-description?
           'default acceptable-value-for-default?
-          'examples acceptable-value-for-examples?))
+          'examples acceptable-value-for-examples?
+
+          ;; semantic validation
+          'format acceptable-value-for-format?
+          ))
 
 (define json-schema-keywords
   (hash-keys json-schema-validators))
