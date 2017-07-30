@@ -54,7 +54,7 @@
 *** TODO title
 *** TODO uniqueItems
 * Validation of instances
-** TODO When checking negative cases, check that the schema really is a schema
+** DONE When checking negative cases, check that the schema really is a schema
    The invert-exit-code script is used to check that an instance does not satisfy the schema.
 
    Not checking this could lead to false positives.
