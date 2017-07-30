@@ -8,6 +8,17 @@
                   first
                   rest))
 
+(require (only-in racket/cmdline
+                  command-line))
+
+(require (only-in (file "util.rkt")
+                  complain-and-die
+                  file-content/bytes
+                  bytes->string))
+
+(require (only-in (file "parse.rkt")
+                  parse-json-string))
+
 (module+ test
   (require rackunit))
 
@@ -296,3 +307,25 @@
          (error "Unknown JSON data type: " type))))
 
 (provide has-type?)
+
+;; Command line application for testing whether a file is
+;; a JSON file at all
+
+(module+ main
+  (define json-path
+    (command-line
+     #:program "json"
+     #:args (json-path)
+     json-path))
+  (unless (file-exists? json-path)
+    (complain-and-die (format "Schema file \"~a\" does not exist." json-path)))
+  (define (parse-fail err) #f)
+  (define json/bytes (file-content/bytes json-path))
+  (define json/string (bytes->string json/bytes))
+  (when (eq? json/string #f)
+    (complain-and-die (format "Contents of \"~a\" cannot be interpreted as a UTF-8 string." json-path)))
+  (define-values (json/jsexpr json-well-formed?)
+    (parse-json-string json/string))
+  (exit (if json-well-formed?
+            0
+            1)))
