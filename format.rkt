@@ -1,5 +1,8 @@
 #lang racket/base
 
+(module+ test
+  (require rackunit))
+
 ;; format validation:
 ;;
 ;; * date-time
