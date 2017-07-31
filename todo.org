@@ -1,76 +1,76 @@
 * Schema validation
-** Positive
-*** TODO multipleOf
-*** TODO maximum
-*** TODO exclusiveMaximum
-*** TODO minimum
-*** TODO exclusiveMinimum
-*** TODO maxLength
-*** TODO minLength
-*** TODO pattern
-*** TODO items
-*** TODO additionalItems
-*** TODO maxItems
-*** TODO minItems
-*** TODO uniqueItems
-*** TODO contains
-*** TODO maxProperties
-*** TODO minProperties
-*** TODO required
-*** TODO properties
-*** TODO patternProperties
-*** TODO additionalProperties
-*** TODO dependencies
-*** TODO propertyNames
-*** TODO enum
-*** TODO const
-*** TODO type
-*** TODO allOf
-*** TODO anyOf
-*** TODO oneOf
-*** TODO not
-*** TODO definitions
-*** TODO title
-*** TODO description
-*** TODO default
-*** TODO examples
-*** TODO format
-** Negative
-*** TODO multipleOf
-*** TODO maximum
-*** TODO exclusiveMaximum
-*** TODO minimum
-*** TODO exclusiveMinimum
-*** TODO maxLength
-*** TODO minLength
-*** TODO pattern
-*** TODO items
-*** TODO additionalItems
-*** TODO maxItems
-*** TODO minItems
-*** TODO uniqueItems
-*** TODO contains
-*** TODO maxProperties
-*** TODO minProperties
-*** TODO required
-*** TODO properties
-*** TODO patternProperties
-*** TODO additionalProperties
-*** TODO dependencies
-*** TODO propertyNames
-*** TODO enum
-*** TODO const
-*** TODO type
-*** TODO allOf
-*** TODO anyOf
-*** TODO oneOf
-*** TODO not
-*** TODO definitions
-*** TODO title
-*** TODO description
-*** TODO default
-*** TODO examples
-*** TODO format
+** Positive [2/35]
+   - [X] multipleOf
+   - [ ] maximum
+   - [ ] exclusiveMaximum
+   - [ ] minimum
+   - [ ] exclusiveMinimum
+   - [ ] maxLength
+   - [ ] minLength
+   - [ ] pattern
+   - [ ] items
+   - [ ] additionalItems
+   - [ ] maxItems
+   - [ ] minItems
+   - [ ] uniqueItems
+   - [ ] contains
+   - [ ] maxProperties
+   - [ ] minProperties
+   - [ ] required
+   - [ ] properties
+   - [ ] patternProperties
+   - [ ] additionalProperties
+   - [ ] dependencies
+   - [ ] propertyNames
+   - [ ] enum
+   - [ ] const
+   - [X] type
+   - [ ] allOf
+   - [ ] anyOf
+   - [ ] oneOf
+   - [ ] not
+   - [ ] definitions
+   - [ ] title
+   - [ ] description
+   - [ ] default
+   - [ ] examples
+   - [ ] format
+** Negative [/]
+   - [ ] multipleOf
+   - [ ] maximum
+   - [ ] exclusiveMaximum
+   - [ ] minimum
+   - [ ] exclusiveMinimum
+   - [ ] maxLength
+   - [ ] minLength
+   - [ ] pattern
+   - [ ] items
+   - [ ] additionalItems
+   - [ ] maxItems
+   - [ ] minItems
+   - [ ] uniqueItems
+   - [ ] contains
+   - [ ] maxProperties
+   - [ ] minProperties
+   - [ ] required
+   - [ ] properties
+   - [ ] patternProperties
+   - [ ] additionalProperties
+   - [ ] dependencies
+   - [ ] propertyNames
+   - [ ] enum
+   - [ ] const
+   - [ ] type
+   - [ ] allOf
+   - [ ] anyOf
+   - [ ] oneOf
+   - [ ] not
+   - [ ] definitions
+   - [ ] title
+   - [ ] description
+   - [ ] default
+   - [ ] examples
+   - [ ] format
 * Validation of instances
 ** DONE When checking negative cases, check that the schema really is a schema
    The invert-exit-code script is used to check that an instance does not satisfy the schema.
