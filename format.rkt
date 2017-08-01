@@ -40,7 +40,7 @@
 (define (hostname? x)
   #t)
 
-(provide hostname)
+(provide hostname?)
 
 ;; https://tools.ietf.org/html/rfc2673#section-3.2
 (define (ipv4? x)
