@@ -8,7 +8,22 @@
 
 (provide ecma-262-regexp?)
 
+;; Incomplete: this uses Racket regular expressions, not ECMA 262
+;; regular expressions!
+;;
+;; Consider looking at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 (define (ecma-262-regexp-matches? regex str)
-  #t)
+  (regexp-match? (regexp regex) str))
 
 (provide ecma-262-regexp-matches?)
+
+(module+ test
+  (check-true (ecma-262-regexp-matches? "abc" "abc"))
+  (check-false (ecma-262-regexp-matches? "a" "b"))
+  (check-true (ecma-262-regexp-matches? "a" "ba"))
+  (check-true (ecma-262-regexp-matches? "a.*" "a"))
+  (check-true (ecma-262-regexp-matches? ".*a" "a"))
+  (check-true (ecma-262-regexp-matches? "^ag" "ag"))
+  (check-false (ecma-262-regexp-matches? "^ab" "a"))
+  (check-true (ecma-262-regexp-matches? "^r$" "r"))
+  (check-false (ecma-262-regexp-matches? "a" "A")))
