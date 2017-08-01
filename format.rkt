@@ -15,12 +15,18 @@
 ;; * uri-template
 ;; * json-pointer
 
+;; All these functions assume that their argument is a string.
+
 ;; https://tools.ietf.org/html/rfc3339#section-5.6
 (define (date-time? x)
-  #t)
+  (regexp-match? #px"^[0-9]{4}[-][0-9]{2}[-][0-9]{2}[T][0-9]{2}[:][0-9]{2}[:][0-9]{2}([.][0-9]{1,})?(.+)$" x))
 
 (module+ test
-  (check-true (date-time? )))
+  (check-true (date-time? "1985-04-12T23:20:50.52Z"))
+  (check-true (date-time? "1996-12-19T16:39:57-08:00"))
+  (check-true (date-time? "1990-12-31T23:59:60Z"))
+  (check-true (date-time? "1990-12-31T15:59:60-08:00"))
+  (check-true (date-time? "1937-01-01T12:00:27.87+00:20")))
 
 (provide date-time?)
 
