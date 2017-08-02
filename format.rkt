@@ -168,10 +168,52 @@
   (check-false (hostname? " hi.byte")))
 
 ;; https://tools.ietf.org/html/rfc2673#section-3.2
+
 (define (ipv4? x)
-  #t)
+  (define (acceptable? n rep-of-n)
+    (cond ((> n 255)
+           #f)
+          ((< n 0)
+           #f)
+          ((and (< n 10)
+                (> (string-length rep-of-n) 1))
+           #f)
+          ((and (< n 100)
+                (> (string-length rep-of-n) 2))
+           #f)
+          ((and (< n 1000)
+                (> (string-length rep-of-n) 3))
+           #f)
+          (else
+           #t)))
+  (cond ((not (string? x))
+         #f)
+        (else
+         (let ([m (regexp-match #px"^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$" x)])
+           (cond ((not (list? m))
+                  #f)
+                 (else
+                  (match-let ([(list whole part-1 part-2 part-3 part-4) m])
+                    (let ([part-1/int (string->number part-1 10)]
+                          [part-2/int (string->number part-2 10)]
+                          [part-3/int (string->number part-3 10)]
+                          [part-4/int (string->number part-4 10)])
+                      (and (acceptable? part-1/int part-1)
+                           (acceptable? part-2/int part-2)
+                           (acceptable? part-3/int part-3)
+                           (acceptable? part-4/int part-4))))))))))
 
 (provide ipv4?)
+
+(module+ test
+  (check-true (ipv4? "127.0.0.1"))
+  (check-true (ipv4? "0.0.0.0"))
+  (check-true (ipv4? "65.13.67.255"))
+  (check-true (ipv4? "255.255.255.255"))
+  (check-false (ipv4? "1"))
+  (check-false (ipv4? #"127.0.0.1"))
+  (check-false (ipv4? "000.000.000.000"))
+  (check-false (ipv4? "310.142.873.9661")))
 
 ;; https://tools.ietf.org/html/rfc2373#section-2.2
 (define (ipv6? x)
