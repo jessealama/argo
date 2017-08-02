@@ -50,7 +50,9 @@
                       #f)
                      ((> hour/int 59)
                       #f)
-                     ((> sec/int 59)
+                     ((> minute/int 60)
+                      #f)
+                     ((> sec/int 60)
                       #f)
                      ((and (= month/int 2)
                            (> dayofmonth/int 29))
@@ -80,9 +82,9 @@
                                             o])
                                  (let ([hour/int (string->number hour/str 10)]
                                        [minute/int (string->number minute/str 10)])
-                                   (cond ((> hour/int 59)
+                                   (cond ((> hour/int 60)
                                           #f)
-                                         ((> minute/int 59)
+                                         ((> minute/int 60)
                                           #f)
                                          (else
                                           #t))))))))
