@@ -10,6 +10,9 @@
                     (only-in mutt
                              email?)))
 
+(require (only-in net/url-string
+                  url-regexp))
+
 ;; format validation:
 ;;
 ;; * date-time
@@ -222,10 +225,18 @@
 (provide ipv6?)
 
 ;; https://tools.ietf.org/html/rfc3986
+
+;; it seems that pretty much every string can be understood as a URL
 (define (uri? x)
-  #t)
+  (and (string? x)
+       (not (string=? x ""))))
 
 (provide uri?)
+
+(module+ test
+  (check-true (uri? "http://ddd.de"))
+  (check-false (uri? #"google.com"))
+  (check-false (uri? "one small step")))
 
 ;; https://tools.ietf.org/html/rfc3986
 (define (uri-reference? x)
