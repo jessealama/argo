@@ -48,7 +48,7 @@
                       #f)
                      ((= dayofmonth/int 0)
                       #f)
-                     ((> hour/int 59)
+                     ((> hour/int 23)
                       #f)
                      ((> minute/int 60)
                       #f)
