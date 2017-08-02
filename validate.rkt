@@ -23,6 +23,17 @@
                   count-properties
                   has-type?))
 
+(require (only-in (file "format.rkt")
+                  date-time?
+                  email?
+                  hostname?
+                  ipv4?
+                  ipv6?
+                  uri?
+                  uri-reference?
+                  uri-template?
+                  json-pointer?))
+
 (require (only-in (file "regexp.rkt")
                   ecma-262-regexp-matches?))
 
