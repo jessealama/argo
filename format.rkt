@@ -72,7 +72,7 @@
                       #f)
                      ((and (string? offset/str)
                            (not (string=? offset/str "Z")))
-                      (let ([o (regexp-match #px"[+-]([0-9]{2})[:]([0-9]{2})" offset/str)])
+                      (let ([o (regexp-match #px"^[+-]([0-9]{2})[:]([0-9]{2})$" offset/str)])
                         (cond ((not (list? o))
                                (error "Failed to parse this time offset:" offset/str))
                               (else
