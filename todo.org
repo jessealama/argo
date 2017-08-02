@@ -190,3 +190,5 @@
 *** TODO uri-reference
 *** TODO uri-template
 *** TODO json-pointer
+* TODO json-schema.org person example
+  Validate positive and negatie instances
