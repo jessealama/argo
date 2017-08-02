@@ -6,6 +6,10 @@
 (require (only-in racket/match
                   match-let))
 
+(require (prefix-in mutt:
+                    (only-in mutt
+                             email?)))
+
 ;; format validation:
 ;;
 ;; * date-time
@@ -22,77 +26,80 @@
 
 ;; https://tools.ietf.org/html/rfc3339#section-5.6
 (define (date-time? x)
-  (let ([m (regexp-match #px"^[0-9]{4}[-]([0-9]{2})[-]([0-9]{2})[T]([0-9]{2})[:]([0-9]{2})[:]([0-9]{2})([.][0-9]{1,})?(.+)$" x)])
-    (cond ((eq? m #f)
-           #f)
-          ((list? m)
-           (match-let ([(list whole
-                              month/str
-                              dayofmonth/str
-                              hour/str
-                              minute/str
-                              sec/str
-                              sec-fracs/str
-                              offset/str)
-                        m])
-             (let ([month/int (string->number month/str 10)]
-                   [dayofmonth/int (string->number dayofmonth/str)]
-                   [hour/int (string->number hour/str)]
-                   [minute/int (string->number minute/str)]
-                   [sec/int (string->number sec/str)])
-               (cond ((> month/int 12)
-                      #f)
-                     ((= month/int 0)
-                      #f)
-                     ((> dayofmonth/int 31)
-                      #f)
-                     ((= dayofmonth/int 0)
-                      #f)
-                     ((> hour/int 23)
-                      #f)
-                     ((> minute/int 60)
-                      #f)
-                     ((> sec/int 60)
-                      #f)
-                     ((and (= month/int 2)
-                           (> dayofmonth/int 29))
-                      #f)
-                     ;; months that have 30 days
-                     ((and (= month/int 4)
-                           (> dayofmonth/int 30))
-                      #f)
-                     ((and (= month/int 6)
-                           (> dayofmonth/int 30))
-                      #f)
-                     ((and (= month/int 9)
-                           (> dayofmonth/int 30))
-                      #f)
-                     ((and (= month/int 11)
-                           (> dayofmonth/int 30))
-                      #f)
-                     ((and (string? offset/str)
-                           (not (string=? offset/str "Z")))
-                      (let ([o (regexp-match #px"^[+-]([0-9]{2})[:]([0-9]{2})$" offset/str)])
-                        (cond ((not (list? o))
-                               (error "Failed to parse this time offset:" offset/str))
-                              (else
-                               (match-let ([(list whole
-                                                  hour/str
-                                                  minute/str)
-                                            o])
-                                 (let ([hour/int (string->number hour/str 10)]
-                                       [minute/int (string->number minute/str 10)])
-                                   (cond ((> hour/int 60)
-                                          #f)
-                                         ((> minute/int 60)
-                                          #f)
-                                         (else
-                                          #t))))))))
-                     (else
-                      ;; no checks for leap years
-                      #t)))))
-          (else
-           (error "Unexpected result from regexp-match:" m)))))
+  (cond ((not (string? x))
+         #f)
+        (else
+         (let ([m (regexp-match #px"^[0-9]{4}[-]([0-9]{2})[-]([0-9]{2})[T]([0-9]{2})[:]([0-9]{2})[:]([0-9]{2})([.][0-9]{1,})?(.+)$" x)])
+           (cond ((eq? m #f)
+                  #f)
+                 ((list? m)
+                  (match-let ([(list whole
+                                     month/str
+                                     dayofmonth/str
+                                     hour/str
+                                     minute/str
+                                     sec/str
+                                     sec-fracs/str
+                                     offset/str)
+                               m])
+                             (let ([month/int (string->number month/str 10)]
+                                   [dayofmonth/int (string->number dayofmonth/str)]
+                                   [hour/int (string->number hour/str)]
+                                   [minute/int (string->number minute/str)]
+                                   [sec/int (string->number sec/str)])
+                               (cond ((> month/int 12)
+                                      #f)
+                                     ((= month/int 0)
+                                      #f)
+                                     ((> dayofmonth/int 31)
+                                      #f)
+                                     ((= dayofmonth/int 0)
+                                      #f)
+                                     ((> hour/int 23)
+                                      #f)
+                                     ((> minute/int 60)
+                                      #f)
+                                     ((> sec/int 60)
+                                      #f)
+                                     ((and (= month/int 2)
+                                           (> dayofmonth/int 29))
+                                      #f)
+                                     ;; months that have 30 days
+                                     ((and (= month/int 4)
+                                           (> dayofmonth/int 30))
+                                      #f)
+                                     ((and (= month/int 6)
+                                           (> dayofmonth/int 30))
+                                      #f)
+                                     ((and (= month/int 9)
+                                           (> dayofmonth/int 30))
+                                      #f)
+                                     ((and (= month/int 11)
+                                           (> dayofmonth/int 30))
+                                      #f)
+                                     ((and (string? offset/str)
+                                           (not (string=? offset/str "Z")))
+                                      (let ([o (regexp-match #px"^[+-]([0-9]{2})[:]([0-9]{2})$" offset/str)])
+                                        (cond ((not (list? o))
+                                               (error "Failed to parse this time offset:" offset/str))
+                                              (else
+                                               (match-let ([(list whole
+                                                                  hour/str
+                                                                  minute/str)
+                                                            o])
+                                                          (let ([hour/int (string->number hour/str 10)]
+                                                                [minute/int (string->number minute/str 10)])
+                                                            (cond ((> hour/int 60)
+                                                                   #f)
+                                                                  ((> minute/int 60)
+                                                                   #f)
+                                                                  (else
+                                                                   #t))))))))
+                                     (else
+                                      ;; no checks for leap years
+                                      #t)))))
+                 (else
+                  (error "Unexpected result from regexp-match:" m)))))))
 
 (module+ test
   (check-true (date-time? "1985-04-12T23:20:50.52Z"))
@@ -114,16 +121,51 @@
 (provide date-time?)
 
 ;; https://tools.ietf.org/html/rfc5322#section-3.4.1
+;;
+;; punt and use a function from the mutt package that probably
+;; covers what I need in many cases
 (define (email? x)
-  #t)
+  (cond ((not (string? x))
+         #f)
+        (else
+         (string? (mutt:email? x)))))
+
+(module+ test
+  (check-true (email? "hi@bye.com"))
+  (check-false (email? " "))
+  (check-false (email? "@re.ew")))
 
 (provide email?)
 
 ;; https://tools.ietf.org/html/rfc1034#section-3.1
+;;
+;; poor man's approach: ASCII with, possibly, some dots in between
 (define (hostname? x)
-  #t)
+  (define (host? x)
+    (let ([m (regexp-match #px"^[[:alnum:]]+([.](.+))?$" x)])
+      (cond ((list? m)
+             (match-let ([(list whole more after-dot) m])
+               (cond ((string? more)
+                      (host? after-dot))
+                     (else
+                      #t))))
+            (else
+             #f))))
+  (cond ((not (string? x))
+         #f)
+        (else
+         (host? x))))
 
 (provide hostname?)
+
+(module+ test
+  (check-false (hostname? 4))
+  (check-true (hostname? "localhost"))
+  (check-true (hostname? "f"))
+  (check-true (hostname? "root.local"))
+  (check-true (hostname? "foo.a.be"))
+  (check-true (hostname? "whatever.ISI.EDU"))
+  (check-false (hostname? " hi.byte")))
 
 ;; https://tools.ietf.org/html/rfc2673#section-3.2
 (define (ipv4? x)
