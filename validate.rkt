@@ -185,11 +185,11 @@
                  (valid-wrt-schema? (property-value data prop)
                                     (property-value properties prop))))
            (cond ((json-object? data)
-                (and (andmap satisfies-property?
-                             (object-properties properties))
-                     (valid-w/o? 'properties)))
-               (else
-                (valid-w/o? 'properties)))))
+                  (and (andmap satisfies-property?
+                               (object-properties data))
+                       (valid-w/o? 'properties)))
+                 (else
+                  (valid-w/o? 'properties)))))
         ((has? 'patternProperties)
          (let ([properties (get 'patternProperties)])
            (define (satisfies-property? prop)
