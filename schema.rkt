@@ -31,7 +31,9 @@
          (only-in racket/cmdline
                   command-line)
          (only-in (file "parse.rkt")
-                  parse-json-string))
+                  parse-json-string)
+         (only-in (file "format.rkt")
+                  uri-reference?))
 
 (module+ test
   (require rackunit))
@@ -254,6 +256,10 @@
 
           ;; semantic validation
           'format acceptable-value-for-format?
+
+          ;; referring to other schemas
+          '$ref acceptable-value-for-$ref?
+          '$schema acceptable-value-for-$schema?
           ))
 
 (define json-schema-keywords
@@ -295,7 +301,9 @@
           'description
           'default
           'examples
-          'format))
+          'format
+          '$schema
+          '$ref))
   (for ([keyword keywords])
     (check-not-false (member keyword json-schema-keywords)))
   (for ([keyword json-schema-keywords])
