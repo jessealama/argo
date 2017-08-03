@@ -1,0 +1,16 @@
+{
+    "dtstart": "2016-05-24T15:30:00+01:00",
+    "dtend": "2016-05-24T18:30:00+01:00",
+    "summary": "great party",
+    "location": "Grüne Brücke",
+    "url": "https://mainz.de",
+    "duration": "3 hours",
+    "rdate": "2017-05-24T15:30:00+01:00",
+    "rrule": "every year",
+    "category": "parties"
+    "description": "hanging out",
+    "geo": {
+	"latitude": 4,
+	"longitude": 56
+    }
+}
