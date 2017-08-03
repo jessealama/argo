@@ -206,15 +206,22 @@
 
 (define (acceptable-value-for-format? value)
   (member value
-          (list (json-string "date-time")
-                (json-string "email")
-                (json-string "hostname")
-                (json-string "ipv4")
-                (json-string "ipv6")
-                (json-string "uri")
-                (json-string "uri-reference")
-                (json-string "uri-template")
-                (json-string "json-pointer"))))
+          (map json-string
+               (list "date-time"
+                     "email"
+                     "hostname"
+                     "ipv4"
+                     "ipv6"
+                     "uri"
+                     "uri-reference"
+                     "uri-template"
+                     "json-pointer"))))
+
+(define (acceptable-value-for-$ref? value)
+  (uri-reference? value))
+
+(define (acceptable-value-for-$schema? value)
+  (string? value))
 
 (define json-schema-validators
   (hasheq 'multipleOf acceptable-value-for-multipleOf?
