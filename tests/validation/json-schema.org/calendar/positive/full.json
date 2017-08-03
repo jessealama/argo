@@ -7,7 +7,7 @@
     "duration": "3 hours",
     "rdate": "2017-05-24T15:30:00+01:00",
     "rrule": "every year",
-    "category": "parties"
+    "category": "parties",
     "description": "hanging out",
     "geo": {
 	"latitude": 4,
