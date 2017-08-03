@@ -230,7 +230,7 @@
 
 (define (uri? x)
   (and (string? x)
-       (string=? x (string->url (url->string x)))))
+       (string=? x (url->string (string->url x)))))
 
 (provide uri?)
 
