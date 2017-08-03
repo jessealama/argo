@@ -11,7 +11,9 @@
                              email?)))
 
 (require (only-in net/url-string
-                  url-regexp))
+                  url-regexp
+                  url->string
+                  string->url))
 
 ;; format validation:
 ;;
