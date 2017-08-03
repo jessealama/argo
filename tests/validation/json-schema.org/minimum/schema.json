@@ -1,0 +1,6 @@
+{
+    "title": "Person",
+    "type": "integer",
+    "description": "Age in years",
+    "minimum": 0
+}
