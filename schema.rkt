@@ -69,13 +69,13 @@
   (json-number? value))
 
 (define (acceptable-value-for-exclusiveMaximum? value)
-  (json-number? value))
+  (json-boolean? value))
 
 (define (acceptable-value-for-minimum? value)
   (json-number? value))
 
 (define (acceptable-value-for-exclusiveMinimum? value)
-  (json-number? value))
+  (json-boolean? value))
 
 (define (acceptable-value-for-maxLength? value)
   (json-non-negative-integer? value))
