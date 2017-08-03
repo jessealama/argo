@@ -315,9 +315,3 @@
          (raise-user-error "Schema should be either a JSON boolean or a JSON object." schema))))
 
 (provide valid-wrt-schema?)
-
-(module+ test)
-
-(module+ main
-  ;; Main entry point, executed when run with the `racket` executable or DrRacket.
-  )
