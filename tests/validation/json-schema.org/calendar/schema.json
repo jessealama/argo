@@ -18,7 +18,6 @@
         "location": { "type": "string" },
         "url": { "type": "string", "format": "uri" },
         "duration": {
-            "format": "time",
             "type": "string",
             "description": "Event duration"
         },
