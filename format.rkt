@@ -226,10 +226,9 @@
 
 ;; https://tools.ietf.org/html/rfc3986
 
-;; it seems that pretty much every string can be understood as a URL
 (define (uri? x)
   (and (string? x)
-       (not (string=? x ""))))
+       (string=? x (string->url (url->string x)))))
 
 (provide uri?)
 
