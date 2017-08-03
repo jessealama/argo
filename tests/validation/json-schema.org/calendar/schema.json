@@ -32,6 +32,6 @@
         },
         "category": { "type": "string" },
         "description": { "type": "string" },
-        "geo": { "$ref": "http: //json-schema.org/geo" }
+        "geo": { "$ref": "http://json-schema.org/geo" }
     }
 }
