@@ -5,6 +5,16 @@
 (module+ test
   (require rackunit))
 
+(require (only-in (file "parse.rkt")
+                  parse-json-bytes))
+
+(require (only-in http/request
+                  uri&headers->path&header
+                  connect-uri
+                  start-request
+                  purify-port/log-debug
+                  read-entity/bytes))
+
 (require (only-in (file "json.rkt")
                   json-boolean?
                   json-number?
@@ -310,6 +320,25 @@
                       (else
                        (error "Unknown format: " f)))
                 (valid-w/o? 'format))))
+        ((has? '$ref)
+         (let ([url (get '$ref)])
+           (define-values (path header) (uri&headers->path&header url (list)))
+           (define-values (in out) (connect-uri url))
+           (let ([ok? (start-request in
+                                     out
+                                     "1.1"
+                                     "GET"
+                                     path
+                                     header)])
+             (let ([h (purify-port/log-debug in)])
+               (let ([schema/bytes (read-entity/bytes in h)])
+                 (let-values ([(schema well-formed?) (parse-json-bytes schema/bytes)])
+                   (and (cond ((not well-formed?)
+                               (log-error (format "Schema at \"~a\" is malformed." url))
+                               (log-error (format "~a" schema/bytes)))
+                              (else
+                               (valid-wrt-schema? data schema)))
+                        (valid-w/o? '$ref))))))))
         (else
          #t)))
 
