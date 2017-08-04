@@ -320,6 +320,8 @@
                       (else
                        (error "Unknown format: " f)))
                 (valid-w/o? 'format))))
+        ((has? 'description)
+         (valid-w/o? 'description))
         ((has? '$ref)
          (let ([url (get '$ref)])
            (define-values (path header) (uri&headers->path&header url (list)))
