@@ -241,7 +241,7 @@
 
 ;; https://tools.ietf.org/html/rfc3986
 (define (uri-reference? x)
-  #t)
+  (uri? x))
 
 (provide uri-reference?)
 
