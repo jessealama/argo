@@ -2,9 +2,9 @@
     "fn": "Mohammed bin Rashid al Maktoum",
     "familyName": "al Maktoum",
     "givenName": "Mohammed",
-    "additionalName": "bin Rashid"
-    "honorificPrefix": "His Highness",
-    "honorificSuffix": "Ruler of Dubai",
+    "additionalName": [ "bin Rashid" ],
+    "honorificPrefix": [ "His Highness" ],
+    "honorificSuffix": [ "Ruler of Dubai" ],
     "nickname": "MBR",
     "url": "http://dubai.ae",
     "email": {
