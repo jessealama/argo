@@ -33,6 +33,11 @@
 
 (provide parse-json-string)
 
+(define (parse-json-bytes bstr)
+  (parse-json-string (bytes->string/utf-8 bstr)))
+
+(provide parse-json-bytes)
+
 (define (parse-json-file f)
   (let ([p (open-input-file f)])
     (begin0
