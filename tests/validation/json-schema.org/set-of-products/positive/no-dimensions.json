@@ -1,0 +1,12 @@
+[
+    {
+	"id": 1,
+	"name": "A green door",
+	"price": 12.50,
+	"tags": ["home", "green"],
+	"warehouseLocation": {
+	    "latitude": 67.1,
+	    "longitude": -13.989
+	}
+    }
+]

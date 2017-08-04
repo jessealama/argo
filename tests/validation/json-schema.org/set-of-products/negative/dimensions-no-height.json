@@ -1,0 +1,12 @@
+[
+    {
+	"id": 1,
+	"name": "A green door",
+	"price": 5,
+	"tags": ["dog", "house"],
+	"dimensions": {
+	    "width": 4,
+	    "length": 2.4
+	}
+    }
+]
