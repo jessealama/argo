@@ -23,6 +23,9 @@
                   count-properties
                   has-type?))
 
+(require (only-in racket/function
+                  identity))
+
 (require (only-in (file "format.rkt")
                   date-time?
                   email?
@@ -57,6 +60,8 @@
     (property-value schema property))
   (define (valid-w/o? property)
     (valid-wrt-schema/object? data (remove property)))
+  ; (log-error (format "data = ~a" data))
+  ; (log-error (format "schema = ~a" schema))
   (cond ((has? 'multipleOf)
          (if (json-number? data)
              (if (exact-integer? (/ data (get 'multipleOf)))
@@ -106,19 +111,21 @@
                  #f)
              (valid-w/o? 'pattern)))
         ((has? 'items)
+         ; (log-error "considering items")
          (if (json-array? data)
              (let ([v (get 'items)])
-               (cond ((json-schema? v)
-                      (andmap (lambda (item)
-                                (valid-wrt-schema? item v))
-                              (array-items data)))
-                     ((json-array? v)
-                      ;; TODO not done yet
-                      )
-                     (else
-                      ;; log error: shouldn't happen if schema really
-                      ;; is a schema
-                      #f)))
+               (and (cond ((json-schema? v)
+                           (andmap (lambda (item)
+                                     (valid-wrt-schema? item v))
+                                   (array-items data)))
+                          ((json-array? v)
+                           (let ([checks (for/list ([i (array-items data)]
+                                                    [s (array-items v)])
+                                           (valid-wrt-schema? i s))])
+                             (andmap identity checks)))
+                          (else
+                           (error "Value of items is neither a JSON schema nor an array.")))
+                    (valid-w/o? 'items)))
              (valid-w/o? 'items)))
         ((has? 'additionalItems)
          (if (json-array? data)
@@ -132,12 +139,13 @@
                  #f)
              (valid-w/o? 'maxItems)))
         ((has? 'minItems)
+         ; (log-error "Working on minItems")
          (if (json-array? data)
-             (if (>= (array-length data) (get 'minItems))
-                 (valid-w/o? 'minItems)
-                 #f)
+             (and (>= (array-length data) (get 'minItems))
+                  (valid-w/o? 'minItems))
              (valid-w/o? 'minItems)))
         ((has? 'uniqueItems)
+         ; (log-error "considering uniqueItems")
          (if (json-false-value? (get 'uniqueItems))
              (valid-w/o? 'uniqueItems)
              (if (json-array? data)
@@ -179,8 +187,11 @@
                    (valid-w/o? 'required)))
              (valid-w/o? 'required)))
         ((has? 'properties)
+
          (let ([properties (get 'properties)])
+           ; (log-error "Working on properties:")
            (define (satisfies-property? prop)
+             ; (log-error (format "considering property \"~a\"" prop))
              (or (not (has-property? data prop))
                  (valid-wrt-schema? (property-value data prop)
                                     (property-value properties prop))))
@@ -252,6 +263,7 @@
          (and (json-equal? data (get 'const))
               (valid-w/o? 'const)))
         ((has? 'type)
+         ; (log-error "considering type")
          (and (has-type? data (get 'type))
               (valid-w/o? 'type)))
         ((has? 'allOf)
