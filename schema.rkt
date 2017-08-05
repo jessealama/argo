@@ -187,7 +187,7 @@
 (define (acceptable-value-for-not? value)
   (json-schema? value))
 
-(define (acceptable-value-for-definition? value)
+(define (acceptable-value-for-definitions? value)
   (and (json-object? value)
        (andmap json-schema?
                (object-values value))))
@@ -255,7 +255,7 @@
           'not acceptable-value-for-not?
 
           ;; metadata validators
-          'definitions acceptable-value-for-definition?
+          'definitions acceptable-value-for-definitions?
           'title acceptable-value-for-title?
           'description acceptable-value-for-description?
           'default acceptable-value-for-default?
