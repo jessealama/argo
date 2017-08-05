@@ -181,14 +181,19 @@
    For the problem of checking whether a JSON document is a JSON schema, it suffices to check that, if the format key is present, that is has one of these values.
 
    Validating inputs against these keywords is a different problem.
-*** TODO date-time
-*** TODO email
-*** TODO hostname
-*** TODO ipv4
+*** DONE date-time
+*** DONE email
+*** DONE hostname
+*** DONE ipv4
 *** TODO ipv6
-*** TODO uri
+*** DONE uri
 *** TODO uri-reference
 *** TODO uri-template
 *** TODO json-pointer
-* TODO json-schema.org person example
+* DONE json-schema.org person example
   Validate positive and negatie instances
+* TODO Verify that the Space Telescope Institute address schema really is a schema
+  :LOGBOOK:
+  CLOCK: [2017-08-05 Sat 06:05]
+  :END:
+  definitions keyword not handled?
