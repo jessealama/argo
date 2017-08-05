@@ -5,6 +5,12 @@
 (module+ test
   (require rackunit))
 
+(require (only-in (file "resolve.rkt")
+                  resolve-schema))
+
+(require (only-in (file "parameters.rkt")
+                  current-id))
+
 (require (only-in (file "parse.rkt")
                   parse-json-bytes))
 
@@ -72,12 +78,15 @@
     (valid-wrt-schema/object? data (remove property)))
   ; (log-error (format "data = ~a" data))
   ; (log-error (format "schema = ~a" schema))
-  (cond ((has? 'multipleOf)
-         (if (json-number? data)
-             (if (exact-integer? (/ data (get 'multipleOf)))
-                 (valid-w/o? 'multipleOf)
-                 #f)
-             (valid-w/o? 'multipleOf)))
+  (cond ((has? '$id)
+         (parameterize ([current-id (get '$id)])
+           (valid-w/o? '$id)))
+        ((has? 'multipleOf)
+            (if (json-number? data)
+                (if (exact-integer? (/ data (get 'multipleOf)))
+                    (valid-w/o? 'multipleOf)
+                  #f)
+              (valid-w/o? 'multipleOf)))
         ((has? 'maximum)
          (let ([w/o? (valid-w/o? 'maximum)]
                [m (get 'maximum)])
@@ -321,24 +330,14 @@
                        (error "Unknown format: " f)))
                 (valid-w/o? 'format))))
         ((has? '$ref)
-         (let ([url (get '$ref)])
-           (define-values (path header) (uri&headers->path&header url (list)))
-           (define-values (in out) (connect-uri url))
-           (let ([ok? (start-request in
-                                     out
-                                     "1.1"
-                                     "GET"
-                                     path
-                                     header)])
-             (let ([h (purify-port/log-debug in)])
-               (let ([schema/bytes (read-entity/bytes in h)])
-                 (let-values ([(schema well-formed?) (parse-json-bytes schema/bytes)])
-                   (and (cond ((not well-formed?)
-                               (log-error (format "Schema at \"~a\" is malformed." url))
-                               (log-error (format "~a" schema/bytes)))
-                              (else
-                               (valid-wrt-schema? data schema)))
-                        (valid-w/o? '$ref))))))))
+         (define-values (resolved-schema loaded?)
+           (resolve-schema (get '$ref)))
+         (cond (loaded?
+                (and (valid-wrt-schema? data resolved-schema)
+                     (valid-w/o? '$ref)))
+               (else
+                (log-error (format "Failed to resolve schema at \"~a\". (Or it is not a JSON schema.)" (get '$ref)))
+                #f)))
         (else
          #t)))
 
