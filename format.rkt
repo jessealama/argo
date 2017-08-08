@@ -15,6 +15,11 @@
                   url->string
                   string->url))
 
+(require net/url-structs)
+
+(require (only-in racket/list
+                  empty?))
+
 ;; format validation:
 ;;
 ;; * date-time
@@ -261,7 +266,7 @@
        (eq? #f (url-user u))
        (eq? #f (url-host u))
        (eq? #f (url-port u))
-       (not (url-absolute? u))
+       (not (url-path-absolute? u))
        (empty? (url-path u))
        (empty? (url-query u))
        (string? (url-fragment u))))
