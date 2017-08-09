@@ -12,6 +12,11 @@
                   empty?))
 (require (only-in (file "pointer-parser.rkt")
                   parse))
+(require (only-in net/url-structs
+                  url?
+                  url-fragment))
+(require (only-in net/url-string
+                  string->url))
 
 (define pointer-lexer
   (lexer
@@ -60,3 +65,16 @@
   (check-true (json-pointer? "/ "))
   (check-true (json-pointer? "/m~0n"))
 )
+
+(define (json-pointer/uri-fragment? x)
+  (cond ((url? x)
+         (json-pointer? (url-fragment x)))
+        ((string? x)
+         (json-pointer? (url-fragment (string->url x))))
+        (else
+         #f)))
+
+(module+ test
+  (check-true (json-pointer/uri-fragment? "#/definitions/foo"))
+  (check-true (json-pointer/uri-fragment? (string->url "http://schema.foo.com/main#/definitions/nice")))
+  (check-false (json-pointer/uri-fragment? "/definitions/foo")))
