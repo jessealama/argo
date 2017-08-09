@@ -7,7 +7,9 @@
                   jsexpr?))
 
 (require (only-in (file "json.rkt")
-                  json-object?))
+                  json-object?
+                  has-property?
+                  property-value))
 
 (require br-parser-tools/lex)
 (require (only-in brag/support
@@ -15,7 +17,10 @@
                   apply-lexer
                   exn:fail:parsing?))
 (require (only-in racket/list
-                  empty?))
+                  empty?
+                  first
+                  second
+                  rest))
 (require (only-in (file "pointer-parser.rkt")
                   parse))
 (require (only-in net/url-structs
@@ -48,7 +53,7 @@
 (provide make-tokenizer)
 
 (define (parse-json-pointer s)
-  (parse (make-tokenizer (open-input-string s))))
+  (syntax->datum (parse (make-tokenizer (open-input-string s)))))
 
 (define (json-pointer? x)
   (and (string? x)
@@ -100,7 +105,39 @@
     (error "Not a JSON value."))
   (unless (json-object? doc)
     (error "Not a JSON object."))
-  doc)
+  (define pointer (parse-json-pointer jp))
+  (unless (list? pointer)
+    (error (format "Result of parsing a JSON pointer (~a) should be a list." jp) pointer))
+  (define (find-value steps document)
+    (if (empty? steps)
+        document
+        (let ([step (first steps)])
+          (unless (eq? step #\/)
+            (error "Expected a slash." step))
+          (when (empty? (rest steps))
+            (error "Slash followed by nothing!"))
+          (unless (json-object? document)
+            (error "Not a JSON object!" document))
+          (let ([next-step (second steps)])
+            (unless (list? next-step)
+              (error "Not a list:" next-step))
+            (when (empty? next-step)
+              (error "Empty next step!"))
+            (let ([next-step-head (first next-step)]
+                  [next-step-tail (rest next-step)])
+              (unless (eq? next-step-head 'reference-token)
+                (error "Expected the reference-token symbol." next-step-head))
+              (unless (andmap string? next-step-tail)
+                (error "reference-point should contain a list of strings" next-step-tail))
+              (let ([property-name (foldl (lambda (a b)
+                                            (format "~a~a" b a))
+                                          ""
+                                          next-step-tail)])
+                (unless (has-property? document property-name)
+                  (error (format "Document does not have property \"~a\"." property-name)))
+                (find-value (rest (rest steps))
+                            (property-value document property-name))))))))
+  (find-value (rest pointer) doc))
 
 (module+ test
   (define sample-doc/str #<<SAMPLE
