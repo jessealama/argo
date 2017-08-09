@@ -29,7 +29,7 @@
    [(eof)
     eof]
    [#\/
-    (token "/")]
+    (token "/" #\/)]
    ["~0"
     (token 'NEGATED-0)]
    ["~1"
