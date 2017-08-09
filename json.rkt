@@ -43,6 +43,20 @@
 
 (provide json-string)
 
+(define (json-number x)
+  (unless (real? x)
+    (error "To make a JSON number, a Racket real? value is required." x))
+  x)
+
+(provide json-number)
+
+(define (json-array . items)
+  (unless (andmap jsexpr? items)
+    (error "To make a JSON array, jsexpr? values are needed."))
+  (apply list items))
+
+(provide json-array)
+
 ;; assumes that x is already a jsexpr? value
 (define (json-null? x)
   (eq? x 'null))
