@@ -152,7 +152,12 @@
 (provide has-property?)
 
 (define (property-value obj prop)
-  (hash-ref obj prop))
+  (cond ((symbol? prop)
+         (hash-ref obj prop))
+        ((string? prop)
+         (hash-ref obj (string->symbol prop)))
+        (else
+         (error "Property should be either a symbol or a string." prop))))
 
 (provide property-value)
 
