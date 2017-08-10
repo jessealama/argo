@@ -1,11 +1,13 @@
 #lang racket/base
 
 (require (only-in racket/list
-                  remove-duplicates)
+                  remove-duplicates
+                  empty?)
          (only-in racket/path
                   path-get-extension)
          (only-in racket/port
-                  port->bytes))
+                  port->bytes)
+         net/url-structs)
 
 (module+ test
   (require rackunit))
@@ -65,3 +67,15 @@
   (exit 1))
 
 (provide complain-and-die)
+
+(define (url-has-only-fragment? u)
+  (and (eq? #f (url-scheme u))
+       (eq? #f (url-user u))
+       (eq? #f (url-host u))
+       (eq? #f (url-port u))
+       (not (url-path-absolute? u))
+       (empty? (url-path u))
+       (empty? (url-query u))
+       (string? (url-fragment u))))
+
+(provide url-has-only-fragment?)
