@@ -122,8 +122,6 @@
             (error "Expected a slash." step))
           (when (empty? (rest steps))
             (error "Slash followed by nothing!"))
-          (unless (json-object? document)
-            (error "Not a JSON object!" document))
           (let ([next-step (second steps)])
             (unless (list? next-step)
               (error "Not a list:" next-step))
@@ -139,11 +137,33 @@
                                             (format "~a~a" b a))
                                           ""
                                           next-step-tail)])
-                (unless (has-property? document property-name)
-                  (error (format "Document does not have property \"~a\"." property-name)))
-                (find-value (rest (rest steps))
-                            (property-value document property-name))))))))
+                (cond ((json-object? document)
+                       (unless (has-property? document property-name)
+                         (error (format "Document does not have property \"~a\"." property-name)))
+                       (find-value (rest (rest steps))
+                                   (property-value document property-name)))
+                      ((json-array? document)
+                       (let ([len (array-length document)])
+                         (cond ((string=? property-name "0")
+                                (when (empty-array? document)
+                                  (error "Empty array; cannot grab the 0th element."))
+                                (find-value (rest (rest steps))
+                                            (array-ref document 0)))
+                               ((regexp-match? "^[1-9][0-9]*$" property-name)
+                                (let ([index (string->number property-name)])
+                                  (when (<= len index)
+                                    (error (format "Index ~a out of bounds (array contains only ~a items)." index len) document))
+                                  (find-value (rest (rest steps))
+                                              (array-ref document index))))
+                               ((string=? property-name "-")
+                                (error "Minus character encountered."))
+                               (else
+                                (error (format "Cannot handle array index \"~a\" for current array." property-name) document)))))
+                      (else
+                       (error "A JSON object or array is needed." document)))))))))
   (find-value (rest pointer) doc))
+
+(provide pointer-value)
 
 (module+ test
   (define sample-doc/str #<<SAMPLE
