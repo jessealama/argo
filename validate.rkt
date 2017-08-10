@@ -6,7 +6,7 @@
   (require rackunit))
 
 (require (only-in (file "resolve.rkt")
-                  resolve-schema))
+                  resolve-schema-wrt-id))
 
 (require (only-in (file "parameters.rkt")
                   current-id))
