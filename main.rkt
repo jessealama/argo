@@ -50,7 +50,6 @@
     (complain-and-die (format "Instance at \"~a\" is not well-formed JSON." instance-path)))
   (unless (json-schema? schema/jsexpr)
     (complain-and-die (format "Schema at \"~a\" is not a JSON schema.")))
-  (parameterize ([original-schema schema/jsexpr])
-    (exit (if (valid-wrt-schema? instance/jsexpr schema/jsexpr)
-              0
-              1))))
+  (exit (if (valid-wrt-schema? instance/jsexpr schema/jsexpr)
+            0
+            1)))
