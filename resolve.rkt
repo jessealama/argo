@@ -45,8 +45,7 @@
                ((url? ref)
                 ref)
                (else
-                (else
-                  (error "ref should be either a string or a URL (url?)." ref)))))
+                (error "ref should be either a string or a URL (url?)." ref))))
         (else
          (error "id should be either a string or false." id))))
 
