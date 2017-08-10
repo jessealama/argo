@@ -205,6 +205,8 @@
    Do I have some examples (and non-examples)?
 ** TODO Evaluation
 *** TODO Define an exception for referring to an item that does not exist
-*** TODO Add the tests in the RFC
+*** DONE Add the tests in the RFC
     https://tools.ietf.org/html/rfc6901
-*** TODO Get the tests to work
+*** DONE Get the tests to work
+*** TODO Add tests from the Space Telescope Science Institute example
+    https://spacetelescope.github.io/understanding-json-schema/structuring.html
