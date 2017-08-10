@@ -219,10 +219,7 @@ SAMPLE
          (pointer-value "/g|h" sample-doc/jsexpr)
          (json-number 4))
   (check json-equal?
-         (pointer-value "/i\\\\j" sample-doc/jsexpr)
-         (json-number 5))
-  (check json-equal?
-         (pointer-value "/i\\\\j" sample-doc/jsexpr)
+         (pointer-value "/i\\j" sample-doc/jsexpr)
          (json-number 5))
   (check json-equal?
          (pointer-value "/k\"l" sample-doc/jsexpr)
