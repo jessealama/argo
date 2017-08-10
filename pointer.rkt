@@ -36,9 +36,9 @@
    [#\/
     (token "/" #\/)]
    ["~0"
-    (token 'NEGATED-0)]
+    (token 'NEGATED-0 "~")]
    ["~1"
-    (token 'NEGATED-1)]
+    (token 'NEGATED-1 "/")]
    [(char-complement (union #\/ #\~))
     (token 'UNESCAPED lexeme)]))
 
