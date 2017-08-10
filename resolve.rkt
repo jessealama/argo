@@ -50,8 +50,8 @@
          (error "id should be either a string or false." id))))
 
 (module+ test
-  (let ([url/string "http://foo.bar/schemas/address.json"]
-        [url (string->url url/string)])
+  (let* ([url/string "http://foo.bar/schemas/address.json"]
+         [url (string->url url/string)])
     (check-equal? url/string
                   (url->string (resolve-ref-wrt-id url/string #f)))
     (check-equal? (string->url "http://foo.bar/schemas/person.json")
