@@ -103,6 +103,11 @@
 
 (provide array-items)
 
+(define (array-ref arr idx)
+  (list-ref (array-items arr) idx))
+
+(provide array-ref)
+
 (define (array-length arr)
   (length (array-items arr)))
 
