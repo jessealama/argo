@@ -20,12 +20,15 @@
                   string->url
                   combine-url/relative))
 
-(require (only-in (file "format.rkt")
-                  json-pointer?))
+(require (only-in net/url-string
+                  url->string))
 
-;; jsoin-pointer? jsexpr? -> jsexpr?
-(define (resolve-pointer-in-document pointer document)
-  document)
+(require (only-in (file "pointer.rkt")
+                  json-pointer?
+                  pointer-value))
+
+(require (only-in (file "util.rkt")
+                  url-has-only-fragment?))
 
 (define (resolve-ref-wrt-id ref id)
   (cond ((string? id)
