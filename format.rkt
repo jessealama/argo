@@ -256,23 +256,7 @@
 
 (provide uri-template?)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; JSON Pointer
-;; https://tools.ietf.org/html/rfc6901
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (url-has-only-fragment? u)
-  (and (eq? #f (url-scheme u))
-       (eq? #f (url-user u))
-       (eq? #f (url-host u))
-       (eq? #f (url-port u))
-       (not (url-path-absolute? u))
-       (empty? (url-path u))
-       (empty? (url-query u))
-       (string? (url-fragment u))))
-
-(define (json-pointer? x)
-  (and (string? x)
-       (url-has-only-fragment? (string->url x))))
+(require (only-in (file "pointer.rkt")
+                  json-pointer?))
 
 (provide json-pointer?)
