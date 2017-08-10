@@ -81,7 +81,7 @@
   (define (get property)
     (property-value schema property))
   (define (valid-w/o? property)
-    (valid-wrt-schema/object? data (remove property)))
+    (valid? data (remove property)))
   ; (log-error (format "data = ~a" data))
   ; (log-error (format "schema = ~a" schema))
   (define original-schema schema)
@@ -94,9 +94,9 @@
                     (valid-w/o? '$id)))
                  ((has? '$ref)
                   (define-values (resolved-schema loaded?)
-                    (resolve-schema-wrt-id (get '$ref) (current-id)))
+                    (resolve-schema-wrt-id (get '$ref) (current-id) data))
                   (cond (loaded?
-                         (and (valid-wrt-schema? data resolved-schema)
+                         (and (valid? data resolved-schema)
                               (valid-w/o? '$ref)))
                         (else
                          (log-error (format "Failed to resolve schema at \"~a\". (Or it is not a JSON schema.)" (get '$ref)))
