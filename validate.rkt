@@ -94,7 +94,7 @@
                     (valid-w/o? '$id)))
                  ((has? '$ref)
                   (define-values (resolved-schema loaded?)
-                    (resolve-schema-wrt-id (get '$ref) (current-id) data))
+                    (resolve-schema-wrt-id (get '$ref) (current-id) original-schema))
                   (cond (loaded?
                          (and (valid? data resolved-schema)
                               (valid-w/o? '$ref)))
