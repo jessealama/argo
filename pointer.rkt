@@ -62,6 +62,8 @@
              #t
            (parse-json-pointer x)))))
 
+(provide json-pointer?)
+
 (module+ test
   (check-false (json-pointer? " "))
 
