@@ -8,6 +8,10 @@
 
 (require (only-in (file "json.rkt")
                   json-object?
+                  json-array?
+                  array-length
+                  array-ref
+                  empty-array?
                   has-property?
                   property-value))
 
