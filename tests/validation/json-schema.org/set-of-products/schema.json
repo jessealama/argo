@@ -15,8 +15,7 @@
             },
             "price": {
                 "type": "number",
-                "minimum": 0,
-                "exclusiveMinimum": true
+                "exclusiveMinimum": 0
             },
             "tags": {
                 "type": "array",
