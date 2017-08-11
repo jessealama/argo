@@ -21,6 +21,10 @@
                   object-properties
                   object-values
                   json-equal?)
+         (only-in net/url-string
+                  string->url)
+         (only-in net/url-structs
+                  url-fragment)
          (only-in (file "regexp.rkt")
                   ecma-262-regexp?)
          (only-in (file "util.rkt")
@@ -33,7 +37,8 @@
          (only-in (file "parse.rkt")
                   parse-json-string)
          (only-in (file "format.rkt")
-                  uri-reference?))
+                  uri-reference?
+                  json-pointer?))
 
 (module+ test
   (require rackunit))
@@ -218,7 +223,14 @@
                      "json-pointer"))))
 
 (define (acceptable-value-for-$ref? value)
-  (uri-reference? value))
+  (and (string? value)
+       (let* ([u (string->url value)]
+              [f (url-fragment u)])
+         (or (eq? #f f)
+             (json-pointer? f)))))
+
+(module+ test
+  (check-true (acceptable-value-for-$ref? "#/definitions/positiveInteger")))
 
 (define (acceptable-value-for-$schema? value)
   (string? value))
