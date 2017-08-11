@@ -80,7 +80,7 @@
   (json-number? value))
 
 (define (acceptable-value-for-exclusiveMinimum? value)
-  (json-boolean? value))
+  (json-number? value))
 
 (define (acceptable-value-for-maxLength? value)
   (json-non-negative-integer? value))
