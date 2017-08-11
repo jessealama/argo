@@ -84,7 +84,7 @@
                        (define-values (path header)
                          (uri&headers->path&header url-w/o-fragment/str (list)))
                        (define-values (in out)
-                         (connect-uri ref))
+                         (connect-uri url-w/o-fragment/str))
                        (define ok? (start-request in
                                                   out
                                                   "1.1"
