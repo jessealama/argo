@@ -175,7 +175,8 @@
   (check-true (hostname? "root.local"))
   (check-true (hostname? "foo.a.be"))
   (check-true (hostname? "whatever.ISI.EDU"))
-  (check-false (hostname? " hi.byte")))
+  (check-false (hostname? " hi.byte"))
+  (check-true (hostname? "my.nfs.server")))
 
 ;; https://tools.ietf.org/html/rfc2673#section-3.2
 
@@ -223,13 +224,20 @@
   (check-false (ipv4? "1"))
   (check-false (ipv4? #"127.0.0.1"))
   (check-false (ipv4? "000.000.000.000"))
-  (check-false (ipv4? "310.142.873.9661")))
+  (check-false (ipv4? "310.142.873.9661"))
+  (check-false (ipv4? "my.nfs.server")))
 
 ;; https://tools.ietf.org/html/rfc2373#section-2.2
 (define (ipv6? x)
-  #t)
+  (and (string? x)
+       (or (regexp-match-exact? #px"([A-Fa-f0-9]:){7}[A-Fa-f0-9]" x)
+           (regexp-match-exact? #px"[A-Fa-f0-9:]+" x)
+           (regexp-match-exact? #px"([A-Fa-f0-9]:){5}:([A-Fa-f0-9]:[1-9][0-9]{0,2}[.]){3}[1-9][0-9]{0,2}" x))))
 
 (provide ipv6?)
+
+(module+ test
+  (check-false (ipv6? "my.nfs.server")))
 
 ;; https://tools.ietf.org/html/rfc3986
 
