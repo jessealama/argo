@@ -1,0 +1,6 @@
+{
+    "storage": {
+        "type": "tmpfs",
+        "sizeInMB": 64
+    }
+}

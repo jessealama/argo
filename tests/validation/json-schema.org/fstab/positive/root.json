@@ -1,0 +1,8 @@
+{
+    "storage": {
+        "type": "disk",
+        "device": "/dev/sda1"
+    },
+    "fstype": "btrfs",
+    "readonly": true
+}

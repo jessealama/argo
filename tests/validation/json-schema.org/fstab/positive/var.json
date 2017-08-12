@@ -1,0 +1,8 @@
+{
+    "storage": {
+        "type": "disk",
+        "label": "8f3ba6f4-5c70-46ec-83af-0d5434953e5f"
+    },
+    "fstype": "ext4",
+    "options": [ "nosuid" ]
+}

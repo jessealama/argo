@@ -1,0 +1,7 @@
+{
+    "storage": {
+        "type": "nfs",
+        "server": "my.nfs.server",
+        "remotePath": "/exports/mypath"
+    }
+}
