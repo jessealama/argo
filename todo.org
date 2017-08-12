@@ -177,7 +177,7 @@
    - [X] description
    - [X] default
    - [X] examples
-** TODO [[http://json-schema.org/latest/json-schema-validation.html#rfc.section.8][Semantic validation keywords]]
+** [[http://json-schema.org/latest/json-schema-validation.html#rfc.section.8][Semantic validation keywords]]
    For the problem of checking whether a JSON document is a JSON schema, it suffices to check that, if the format key is present, that is has one of these values.
 
    Validating inputs against these keywords is a different problem.
@@ -192,21 +192,21 @@
 *** TODO json-pointer
 * DONE json-schema.org person example
   Validate positive and negatie instances
-* TODO Verify that the Space Telescope Institute address schema really is a schema
+* DONE Verify that the Space Telescope Institute address schema really is a schema
   :LOGBOOK:
   CLOCK: [2017-08-05 Sat 06:05]--[2017-08-05 Sat 07:26] =>  1:21
   :END:
   definitions keyword not handled?
-* TODO Verify the positive integer example
-* TODO Add regular expression tests
+* DONE Verify the positive integer example
+* DONE Add regular expression tests
   https://spacetelescope.github.io/understanding-json-schema/reference/regular_expressions.html
-* TODO JSON pointers
-** TODO Define a test for whether a string is a JSON pointer
+* DONE JSON pointers
+** DONE Define a test for whether a string is a JSON pointer
    Do I have some examples (and non-examples)?
 ** TODO Evaluation
 *** TODO Define an exception for referring to an item that does not exist
 *** DONE Add the tests in the RFC
     https://tools.ietf.org/html/rfc6901
 *** DONE Get the tests to work
-*** TODO Add tests from the Space Telescope Science Institute example
+*** DONE Add tests from the Space Telescope Science Institute example
     https://spacetelescope.github.io/understanding-json-schema/structuring.html
