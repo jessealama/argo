@@ -230,14 +230,41 @@
 ;; https://tools.ietf.org/html/rfc2373#section-2.2
 (define (ipv6? x)
   (and (string? x)
-       (or (regexp-match-exact? #px"([A-Fa-f0-9]:){7}[A-Fa-f0-9]" x)
-           (regexp-match-exact? #px"[A-Fa-f0-9:]+" x)
-           (regexp-match-exact? #px"([A-Fa-f0-9]:){5}:([A-Fa-f0-9]:[1-9][0-9]{0,2}[.]){3}[1-9][0-9]{0,2}" x))))
+       (or ;; type 1
+        (regexp-match-exact? #px"([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}" x)
+        (and (regexp-match? #rx"::" x)
+             (regexp-match-exact? #px"[A-Fa-f0-9:]+" x)
+             ;; type 2 with double colon
+             ;; type 3 with double colon
+             )
+        ;; type 3 without double colon
+        (regexp-match-exact? #px"([A-Fa-f0-9]{1,4}:){5}[A-Fa-f0-9]{1,4}:([1-9][0-9]{0,2}[.]){3}[1-9][0-9]{0,2}" x))))
 
 (provide ipv6?)
 
 (module+ test
-  (check-false (ipv6? "my.nfs.server")))
+  (check-false (ipv6? "my.nfs.server"))
+
+  ;; examples from section 2.2 of RFC 2373 (https://tools.ietf.org/html/rfc2373#section-2.2)
+
+  ;; type 1
+  (check-true (ipv6? "FEDC:BA98:7654:3210:FEDC:BA98:7654:3210"))
+  (check-true (ipv6? "1080:0:0:0:8:800:200C:417A"))
+  (check-true (ipv6? "FF01:0:0:0:0:0:0:101"))
+  (check-true (ipv6? "0:0:0:0:0:0:0:1"))
+  (check-true (ipv6? "0:0:0:0:0:0:0:0"))
+
+  ;; type 2
+  (check-true (ipv6? "1080::8:800:200C:417A"))
+  (check-true (ipv6? "FF01::101"))
+  (check-true (ipv6? "::1"))
+  (check-true (ipv6? "::"))
+
+  ;; type 3
+  (check-true (ipv6? "0:0:0:0:0:0:13.1.68.3"))
+  (check-true (ipv6? "0:0:0:0:0:FFFF:129.144.52.38"))
+  (check-true (ipv6? "::13.1.68.3"))
+  (check-true (ipv6? "::FFFF:129.144.52.38")))
 
 ;; https://tools.ietf.org/html/rfc3986
 
