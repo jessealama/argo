@@ -33,4 +33,13 @@
     (check-true (ecma-262-regexp-matches? r "555-1212"))
     (check-true (ecma-262-regexp-matches? r "(888)555-1212"))
     (check-false (ecma-262-regexp-matches? r "(888)555-1212 ext. 532"))
-    (check-false (ecma-262-regexp-matches? r "(800)FLOWERS"))))
+    (check-false (ecma-262-regexp-matches? r "(800)FLOWERS")))
+
+  (let ([uuid-regexp "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"])
+    (check-true (ecma-262-regexp-matches? uuid-regexp "8f3ba6f4-5c70-46ec-83af-0d5434953e5f")))
+
+  (let ([nfs-regexp "^(/[^/]+)+$"])
+    (check-true (ecma-262-regexp-matches? nfs-regexp "/exports/mypath")))
+
+  (let ([dev-regexp "^/dev/[^/]+(/[^/]+)*$"])
+    (check-true (ecma-262-regexp-matches? dev-regexp "/dev/sda1"))))
