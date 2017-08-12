@@ -13,7 +13,7 @@
 ;;
 ;; Consider looking at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 (define (ecma-262-regexp-matches? regex str)
-  (regexp-match? (regexp regex) str))
+  (regexp-match? (pregexp regex) str))
 
 (provide ecma-262-regexp-matches?)
 
