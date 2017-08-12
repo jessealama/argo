@@ -42,4 +42,7 @@
     (check-true (ecma-262-regexp-matches? nfs-regexp "/exports/mypath")))
 
   (let ([dev-regexp "^/dev/[^/]+(/[^/]+)*$"])
-    (check-true (ecma-262-regexp-matches? dev-regexp "/dev/sda1"))))
+    (check-true (ecma-262-regexp-matches? dev-regexp "/dev/sda1")))
+
+  (check-true (ecma-262-regexp-matches? "foo" "foo"))
+  (check-true (ecma-262-regexp-matches? "foo" "afool")))
