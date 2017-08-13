@@ -187,9 +187,9 @@
 *** DONE ipv4
 *** TODO ipv6
 *** DONE uri
-*** TODO uri-reference
+*** DONE uri-reference
 *** TODO uri-template
-*** TODO json-pointer
+*** DONE json-pointer
 * DONE json-schema.org person example
   Validate positive and negatie instances
 * DONE Verify that the Space Telescope Institute address schema really is a schema
