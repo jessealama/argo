@@ -1,6 +1,6 @@
 #lang brag
 uri-template : (literals | expression)*
-literals: LETTER | DIGIT | "." | ":" | SAFE-CHAR |  pct-encoded
+literals: LETTER | DIGIT | "." | ":" | "?" | SAFE-CHAR |  pct-encoded
 pct-encoded: "%" hex-digit
 hex-digit: DIGIT | hexchar
 hexchar: "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" | "f"

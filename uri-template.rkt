@@ -35,6 +35,10 @@
     (token "." ".")]
    [#\:
     (token ":" ":")]
+   [#\?
+    (token "?" "?")]
+   [#\,
+    (token "," ",")]
    [(char-range "A" "z")
     (token 'LETTER lexeme)]
    [(union #\!                          ; %x21
