@@ -28,7 +28,13 @@
    ["}"
     (token "}" "}")]
    [(char-range "0" "9")
-    (token 'NUMERAL lexeme)]
+    (if (string=? "0" lexeme)
+        (token 'ZERO lexeme)
+        (token 'NON-ZERO-DIGIT lexeme))]
+   [#\.
+    (token "." ".")]
+   [#\:
+    (token ":" ":")]
    [(char-range "A" "z")
     (token 'LETTER lexeme)]
    [(union #\!                          ; %x21
