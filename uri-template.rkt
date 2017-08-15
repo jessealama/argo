@@ -115,24 +115,60 @@
 ;; Parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (uri-template-parameter-pair? x)
-  (and (pair? x)
-       (symbol? (car x))))
+(define (uri-template-parameter-name? x)
+  (symbol? x))
+
+(module+ test
+  (check-true (uri-template-parameter-name? 'hi))
+  (check-false (uri-template-parameter-name? "hi")))
+
+(define (uri-template-parameter-value? x)
+  (define (ok/non-list? x)
+    (or (and (string? x)
+             (not (string=? "" x)))
+        (exact-integer? x)))
+  (or (ok/non-list? x)
+      (and (list? x)
+           (not (null? x))
+           (andmap ok/non-list? x))))
+
+(module+ test
+  (check-true (uri-template-parameter-value? 1))
+  (check-true (uri-template-parameter-value? -5))
+  (check-true (uri-template-parameter-value? "blue"))
+  (check-true (uri-template-parameter-value? (list 4 "hi")))
+  (check-false (uri-template-parameter-value? (list (list "hi"))))
+  (check-false (uri-template-parameter-value? (list))))
 
 (define (uri-template-parameters? x)
-  (and (list? x)
-       (andmap uri-template-parameter-pair? x)))
+  (and (hash? x)
+       (andmap symbol?
+               (hash-keys x))
+       (andmap uri-template-parameter-value?
+               (hash-values x))))
 
 (define (make-uri-template-parameters . more)
   (cond ((null? more)
-         (list))
+         (hash))
         ((null? (cdr more))
-         (error "No more arguments after:" (car more)))
+         (error "No more arguments after:" more))
         (else
-         (let ([p (cons (car more) (cdr more))])
-           (unless (uri-template-parameter-pair? p)
-             (error "Not a URI template parameter pair:" p))
-           (cons p (make-uri-template-parameters (rest (rest more))))))))
+         (let ([a (first more)]
+               [b (second more)])
+           (unless (uri-template-parameter-name? a)
+             (error "Invalid URI Template parameter name:" a))
+           (unless (uri-template-parameter-value? b)
+             (error "Invalid URI Template parameter value:" b))
+           (let ([made (apply make-uri-template-parameters (rest (rest more)))])
+             (if (hash-has-key? made a)
+                 (hash-set made a (append (hash-ref made a) (list b)))
+                 (hash-set made a b)))))))
+
+(module+ test
+  (check-exn exn:fail?
+             (lambda ()
+               (make-uri-template-parameters 'a "x" 'a (list "boom")))
+             "Repeated key, second time as a list! (Violates principle that the value of a URI Template parameter, if a list, should be flat.)"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Evaluation
@@ -140,6 +176,10 @@
 
 ;; uri-template? uri-template-variables? -> url?
 (define (expand-uri-template template variables)
+  (unless (uri-template? template)
+    (error "Not a URI template:" template))
+  (unless (uri-template-parameters? variables)
+    (error "Not a suitable set/list of URI Template parameters:" variables))
   (string->url "http://racket-lang.org"))
 
 (provide expand-uri-template)
