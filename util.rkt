@@ -230,6 +230,8 @@
        (url-queries-equal? url-1 url-2)
        (url-fragments-equal? url-1 url-2)))
 
+(provide urls-equal?)
+
 (module+ test
   (let ([empty-url (url #f #f #f #f #f (list) (list) #f)])
     (check-true (urls-equal? empty-url empty-url))))
