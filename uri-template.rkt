@@ -209,29 +209,29 @@
     (check-true (uri-template-parameters? parameters4))
     (check-true (uri-template-parameters? parameters5))
     (let-test ([expanded (expand-uri-template template parameters1)])
-              (check-true (url? expanded))
-              (check-true (string=? "http"
-                                    (url-scheme expanded)))
-              (check-eq? #f
-                         (url-user expanded))
-              (check-true (string=? "www.example.com"
-                                    (url-host expanded)))
-              (check-eq? #f
-                         (url-port expanded))
-              (check-eq? #t
-                         (url-path-absolute? expanded))
-              (check-= 1 (length (url-path expanded)) 0)
-              (check-true (string=? "foo"
-                                    (first (url-path expanded))))
-              (check-true #f
-                          (url-fragment expanded))
-              (let-test ([query (url-query expanded)])
-                        (check-= 2 (length query) 0)
-                        (let-test ([q (first query)])
-                                  (check-eq? 'query (car q))
-                                  (check-true (string? (cdr q)))
-                                  (check-true (string=? "mycelium" (cdr q))))
-                        (let-test ([q (second query)])
-                                  (check-eq? 'number (car q))
-                                  (check-true (string? (cdr q)))
-                                  (check-true (string=? "100" (cdr q))))))))
+      (check-true (url? expanded))
+      (check-true (string=? "http"
+                            (url-scheme expanded)))
+      (check-eq? #f
+                 (url-user expanded))
+      (check-true (string=? "www.example.com"
+                            (url-host expanded)))
+      (check-eq? #f
+                 (url-port expanded))
+      (check-eq? #t
+                 (url-path-absolute? expanded))
+      (check-= 1 (length (url-path expanded)) 0)
+      (check-true (string=? "foo"
+                            (first (url-path expanded))))
+      (check-true #f
+                  (url-fragment expanded))
+      (let-test ([query (url-query expanded)])
+        (check-= 2 (length query) 0)
+        (let-test ([q (first query)])
+          (check-eq? 'query (car q))
+          (check-true (string? (cdr q)))
+          (check-true (string=? "mycelium" (cdr q))))
+        (let-test ([q (second query)])
+          (check-eq? 'number (car q))
+          (check-true (string? (cdr q)))
+          (check-true (string=? "100" (cdr q))))))))
