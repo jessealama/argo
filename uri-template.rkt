@@ -1,7 +1,12 @@
-#lang racket/base
+#lang racket
 
 (module+ test
-  (require rackunit))
+  (require rackunit)
+  (require br/define)
+  (define-macro (let-test BINDINGS EXPR ...)
+    #'(let BINDINGS (test-begin EXPR ...)))
+  (define-macro (let*-test BINDINGS EXPR ...)
+    #'(let* BINDINGS (test-begin EXPR ...))))
 
 (require net/url-structs)
 (require br-parser-tools/lex)
@@ -189,40 +194,44 @@
 (provide expand-uri-template)
 
 (module+ test
-  (let* ([template "http://www.example.com/foo{?query,number}"]
-         [parameters (list (cons 'query "mycelium")
-                           (cons 'number 100))])
-    (test-begin
-      (check-true (uri-template? template))
-      (check-true (uri-template-parameters? parameters))
-      (let ([expanded (expand-uri-template template parameters)])
-        (test-begin
-          (check-true (url? expanded))
-          (check-true (string=? "http"
-                                (url-scheme expanded)))
-          (check-eq? #f
-                     (url-user expanded))
-          (check-true (string=? "www.example.com"
-                                (url-host expanded)))
-          (check-eq? #f
-                     (url-port expanded))
-          (check-eq? #t
-                     (url-path-absolute? expanded))
-          (check-= 1 (length (url-path expanded)) 0)
-          (check-true (string=? "foo"
-                                (first (url-path expanded))))
-          (check-true #f
-                      (url-fragment expanded))
-          (let ([query (url-query expanded)])
-            (test-begin
-              (check-= 2 (length query) 0)
-              (let ([q (first query)])
-                (test-begin
-                  (check-eq? 'query (car q))
-                  (check-true (string? (cdr q)))
-                  (check-true (string=? "mycelium" (cdr q)))))
-              (let ([q (second query)])
-                (test-begin
-                  (check-eq? 'number (car q))
-                  (check-true (string? (cdr q)))
-                  (check-true (string=? "100" (cdr q))))))))))))
+  (let*-test ([template "http://www.example.com/foo{?query,number}"]
+              [parameters1 (list (cons 'query "mycelium")
+                                 (cons 'number 100))]
+              [parameters2 (list (cons 'query "mycelium")
+                                 (cons 'number 100))]
+              [parameters3 (list (cons 'number 100))]
+              [parameters4 (list)]
+              [parameters5 (list (cons 'some "pig"))])
+    (check-true (uri-template? template))
+    (check-true (uri-template-parameters? parameters1))
+    (check-true (uri-template-parameters? parameters2))
+    (check-true (uri-template-parameters? parameters3))
+    (check-true (uri-template-parameters? parameters4))
+    (check-true (uri-template-parameters? parameters5))
+    (let-test ([expanded (expand-uri-template template parameters1)])
+              (check-true (url? expanded))
+              (check-true (string=? "http"
+                                    (url-scheme expanded)))
+              (check-eq? #f
+                         (url-user expanded))
+              (check-true (string=? "www.example.com"
+                                    (url-host expanded)))
+              (check-eq? #f
+                         (url-port expanded))
+              (check-eq? #t
+                         (url-path-absolute? expanded))
+              (check-= 1 (length (url-path expanded)) 0)
+              (check-true (string=? "foo"
+                                    (first (url-path expanded))))
+              (check-true #f
+                          (url-fragment expanded))
+              (let-test ([query (url-query expanded)])
+                        (check-= 2 (length query) 0)
+                        (let-test ([q (first query)])
+                                  (check-eq? 'query (car q))
+                                  (check-true (string? (cdr q)))
+                                  (check-true (string=? "mycelium" (cdr q))))
+                        (let-test ([q (second query)])
+                                  (check-eq? 'number (car q))
+                                  (check-true (string? (cdr q)))
+                                  (check-true (string=? "100" (cdr q))))))))
