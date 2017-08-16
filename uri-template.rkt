@@ -180,6 +180,10 @@
     (error "Not a URI template:" template))
   (unless (uri-template-parameters? variables)
     (error "Not a suitable set/list of URI Template parameters:" variables))
+  (unless (list? template)
+    (error "Template should be a list:" template))
+  (when (null? template)
+    (error "Template should not be the empty list."))
   (string->url "http://racket-lang.org"))
 
 (provide expand-uri-template)
