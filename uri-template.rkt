@@ -3,10 +3,17 @@
 (module+ test
   (require rackunit)
   (require br/define)
+  (require (only-in (file "util.rkt")
+                    urls-equal?))
   (define-macro (let-test BINDINGS EXPR ...)
     #'(let BINDINGS (test-begin EXPR ...)))
   (define-macro (let*-test BINDINGS EXPR ...)
-    #'(let* BINDINGS (test-begin EXPR ...))))
+    #'(let* BINDINGS (test-begin EXPR ...)))
+  (define (check-urls-= url-1 url-2)
+    (test-begin
+      (check-true (url? url-1))
+      (check-true (url? url-2))
+      (check-true (urls-equal? url-1 url-2)))))
 
 (require net/url-structs)
 (require br-parser-tools/lex)
@@ -89,7 +96,6 @@
   (check-not-exn (lambda () (lex-uri-template "http://example.com/~{username}/")))
   (check-not-exn (lambda () (lex-uri-template "http://example.com/dictionary/{term:1}/{term}")))
   (check-not-exn (lambda () (lex-uri-template "http://example.com/search{?q,lang}")))
-  (check-not-exn (lambda () (lex-uri-template "http://www.example.com/foo{?query,number}")))
   (check-not-exn (lambda () (lex-uri-template "http://www.example.com/foo{?query,number}"))))
 
 (define (make-tokenizer port)
@@ -113,7 +119,6 @@
   (check-true (uri-template? "http://example.com/~{username}/"))
   (check-true (uri-template? "http://example.com/dictionary/{term:1}/{term}"))
   (check-true (uri-template? "http://example.com/search{?q,lang}"))
-  (check-true (uri-template? "http://www.example.com/foo{?query,number}"))
   (check-true (uri-template? "http://www.example.com/foo{?query,number}")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -195,43 +200,25 @@
 
 (module+ test
   (let*-test ([template "http://www.example.com/foo{?query,number}"]
-              [parameters1 (list (cons 'query "mycelium")
+              [parameters-1 (list (cons 'query "mycelium")
                                  (cons 'number 100))]
-              [parameters2 (list (cons 'query "mycelium")
-                                 (cons 'number 100))]
-              [parameters3 (list (cons 'number 100))]
-              [parameters4 (list)]
-              [parameters5 (list (cons 'some "pig"))])
+              [answer-1 (string->url "http://www.example.com/foo?query=mycelium&number=100")]
+              [parameters-2 (list (cons 'query "mycelium"))]
+              [answer-2 (string->url "http://www.example.com/foo?query=mycelium")]
+              [parameters-3 (list (cons 'number 100))]
+              [answer-3 (string->url "http://www.example.com/foo?number=100")]
+              [parameters-4 (list)]
+              [answer-4 (string->url "http://www.example.com/foo")]
+              [parameters-5 (list (cons 'some "pig"))]
+              [answer-5 (string->url "http://www.example.com/foo")])
     (check-true (uri-template? template))
-    (check-true (uri-template-parameters? parameters1))
-    (check-true (uri-template-parameters? parameters2))
-    (check-true (uri-template-parameters? parameters3))
-    (check-true (uri-template-parameters? parameters4))
-    (check-true (uri-template-parameters? parameters5))
-    (let-test ([expanded (expand-uri-template template parameters1)])
-      (check-true (url? expanded))
-      (check-true (string=? "http"
-                            (url-scheme expanded)))
-      (check-eq? #f
-                 (url-user expanded))
-      (check-true (string=? "www.example.com"
-                            (url-host expanded)))
-      (check-eq? #f
-                 (url-port expanded))
-      (check-eq? #t
-                 (url-path-absolute? expanded))
-      (check-= 1 (length (url-path expanded)) 0)
-      (check-true (string=? "foo"
-                            (first (url-path expanded))))
-      (check-true #f
-                  (url-fragment expanded))
-      (let-test ([query (url-query expanded)])
-        (check-= 2 (length query) 0)
-        (let-test ([q (first query)])
-          (check-eq? 'query (car q))
-          (check-true (string? (cdr q)))
-          (check-true (string=? "mycelium" (cdr q))))
-        (let-test ([q (second query)])
-          (check-eq? 'number (car q))
-          (check-true (string? (cdr q)))
-          (check-true (string=? "100" (cdr q))))))))
+    (check-true (uri-template-parameters? parameters-1))
+    (check-true (uri-template-parameters? parameters-2))
+    (check-true (uri-template-parameters? parameters-3))
+    (check-true (uri-template-parameters? parameters-4))
+    (check-true (uri-template-parameters? parameters-5))
+    (check-urls-= answer-1 (expand-uri-template template parameters-1))
+    (check-urls-= answer-2 (expand-uri-template template parameters-2))
+    (check-urls-= answer-3 (expand-uri-template template parameters-3))
+    (check-urls-= answer-4 (expand-uri-template template parameters-4))
+    (check-urls-= answer-5 (expand-uri-template template parameters-5))))
