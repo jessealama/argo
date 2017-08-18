@@ -226,13 +226,29 @@
 ;; Evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (expand-token token template-variables)
+  (cond ((text-token? token)
+         (token-struct-val token))
+        ((expression-token? token)
+         (let ([val (token-struct-val token)])
+           (let ([parsed (parse-uri-template-expression val)])
+             (log-error "parsed = ~s" parsed)
+             val)))
+        (else
+         (error "Unhandled token:" token))))
+
 ;; uri-template? uri-template-variables? -> string?
 (define (expand-uri-template template variables)
   (unless (string? template)
     (error "Template is not a string:" template))
   (unless (uri-template-parameters? variables)
     (error "Not a suitable set/list of URI Template parameters:" variables))
-  "http://racket-lang.org")
+  (let ([lexed-template (lex-uri-template template)])
+    (let ([expanded (map (lambda (tok) (expand-token tok variables))
+                         (lex-uri-template template))])
+      (foldr (lambda (a b) (format "~a~a" a b))
+             ""
+             expanded))))
 
 (provide expand-uri-template)
 
