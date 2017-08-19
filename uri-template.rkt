@@ -231,17 +231,33 @@
 (define (has-operator? expr)
   (not (eq? #f (expression-operator expr))))
 
+(define (varspec->string varspec)
+  (match varspec
+    [(list 'varspec (list 'varname varchar ...))
+     (foldr (lambda (a b)
+              (format "~a~a" a b))
+            ""
+            (map second varchar))]))
+
+(module+ test
+  (let*-test ([data '(varspec
+                      (varname
+                       (varchar "q")
+                       (varchar "u")
+                       (varchar "e")
+                       (varchar "r")
+                       (varchar "y")))]
+              [answer (varspec->string data)])
+    (check-true (string? answer))
+    (check-true (string=? "query" answer))))
+
+(define (parsed-varspec? x)
+  (and (list? x)
+       (not (null? x))
+       (eq? (first x) 'varspec)))
+
 (define (variable-list->list varlist)
-  (match varlist
-    [(list) (list)]
-    [(list-rest "," more)
-     (variable-list->list more)]
-    [(list-rest 'varspec (list 'varname varchars) more)
-     (cons (foldr (lambda (a b)
-                    (format "~a~a" a b))
-                  ""
-                  (map second varchars))
-           (variable-list->list more))]))
+  (map varspec->string (filter parsed-varspec? varlist)))
 
 (module+ test
   (let*-test ([data (list
@@ -262,16 +278,12 @@
                         (varchar "e")
                         (varchar "r"))))]
               [answer (variable-list->list data)])
-    (check-true (expression? answer))
-    (check-true (has-operator? answer))
-    (check-true (string=? "?" (expression-operator answer)))
-    (let-test ([vars (expression-variables answer)])
-      (check-true (list? vars))
-      (check-= 2 (length vars) 0)
-      (check-true (string? (first vars)))
-      (check-true (string=? "query" (first vars)))
-      (check-true (string? (second vars)))
-      (check-true (string=? "number" (second vars))))))
+    (check-true (list? answer))
+    (check-= 2 (length answer) 0)
+    (check-true (string? (first answer)))
+    (check-true (string=? "query" (first answer)))
+    (check-true (string? (second answer)))
+    (check-true (string=? "number" (second answer)))))
 
 ; list? -> expression?
 (define (expression-datum->expression datum)
