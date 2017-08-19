@@ -226,6 +226,65 @@
 ;; Evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(struct expression (operator variables))
+
+(define (has-operator? expr)
+  (not (eq? #f (expression-operator expr))))
+
+(define (variable-list->list varlist)
+  (match varlist
+    [(list) (list)]
+    [(list-rest "," more)
+     (variable-list->list more)]
+    [(list-rest 'varspec (list 'varname varchars) more)
+     (cons (foldr (lambda (a b)
+                    (format "~a~a" a b))
+                  ""
+                  (map second varchars))
+           (variable-list->list more))]))
+
+(module+ test
+  (let*-test ([data (list
+                     '(varspec
+                       (varname
+                        (varchar "q")
+                        (varchar "u")
+                        (varchar "e")
+                        (varchar "r")
+                        (varchar "y")))
+                     ","
+                     '(varspec
+                       (varname
+                        (varchar "n")
+                        (varchar "u")
+                        (varchar "m")
+                        (varchar "b")
+                        (varchar "e")
+                        (varchar "r"))))]
+              [answer (variable-list->list data)])
+    (check-true (expression? answer))
+    (check-true (has-operator? answer))
+    (check-true (string=? "?" (expression-operator answer)))
+    (let-test ([vars (expression-variables answer)])
+      (check-true (list? vars))
+      (check-= 2 (length vars) 0)
+      (check-true (string? (first vars)))
+      (check-true (string=? "query" (first vars)))
+      (check-true (string? (second vars)))
+      (check-true (string=? "number" (second vars))))))
+
+; list? -> expression?
+(define (expression-datum->expression datum)
+  (match datum
+    [(list 'expression "{" expr-body "}")
+     (match expr-body
+       [(list 'variable-list varspecs)
+        (expression #f (variable-list->list varspecs))]
+       [(list (list 'operator op) (list 'variable-list varspecs))
+        (expression op (variable-list->list varspecs))])]))
+
+(module+ test)
+
 (define (expand-token token template-variables)
   (cond ((text-token? token)
          (token-struct-val token))
