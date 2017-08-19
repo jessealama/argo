@@ -322,11 +322,39 @@
     (check-true (string=? "?" (expression-operator answer)))
     (let-test ([vars (expression-variables answer)])
       (check-true (list? vars))
-      (check-= 2 (length vars) 0)
-      (check-true (string? (first vars)))
-      (check-true (string=? "query" (first vars)))
-      (check-true (string? (second vars)))
-      (check-true (string=? "number" (second vars))))))
+      (check-equal? vars (list "query" "number"))))
+  ;; expression without an operator
+  (let*-test ([expression/list '(expression
+                                 "{"
+                                 (variable-list
+                                  (varspec
+                                   (varname
+                                    (varchar "s")
+                                    (varchar "o")
+                                    (varchar "m")
+                                    (varchar "e")))
+                                  ","
+                                  (varspec
+                                   (varname
+                                    (varchar "p")
+                                    (varchar "i")
+                                    (varchar "g")))
+                                  ","
+                                  (varspec
+                                   (varname
+                                    (varchar "t")
+                                    (varchar "h")
+                                    (varchar "e")
+                                    (varchar "r")
+                                    (varchar "e"))))
+                                 "}")]
+              [answer (expression-datum->expression expression/list)])
+    (check-true (expression? answer))
+    (check-false (has-operator? answer))
+    (check-eq? #f (expression-operator answer))
+    (let-test ([vars (expression-variables answer)])
+      (check-true (list? vars))
+      (check-equal? vars (list "some" "pig" "there")))))
 
 (define (expand-token token template-variables)
   (cond ((text-token? token)
