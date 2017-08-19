@@ -288,14 +288,45 @@
 ; list? -> expression?
 (define (expression-datum->expression datum)
   (match datum
-    [(list 'expression "{" expr-body "}")
-     (match expr-body
-       [(list 'variable-list varspecs)
-        (expression #f (variable-list->list varspecs))]
-       [(list (list 'operator op) (list 'variable-list varspecs))
-        (expression op (variable-list->list varspecs))])]))
+    [(list 'expression "{" (list 'operator op) varlist "}")
+     (expression op (variable-list->list varlist))]
+    [(list 'expression "{" varlist "}")
+     (expression #f (variable-list->list varlist))]))
 
-(module+ test)
+(module+ test
+  (let*-test ([expression/list '(expression
+                                 "{"
+                                 (operator "?")
+                                 (variable-list
+                                  (varspec
+                                   (varname
+                                    (varchar "q")
+                                    (varchar "u")
+                                    (varchar "e")
+                                    (varchar "r")
+                                    (varchar "y")))
+                                  ","
+                                  (varspec
+                                   (varname
+                                    (varchar "n")
+                                    (varchar "u")
+                                    (varchar "m")
+                                    (varchar "b")
+                                    (varchar "e")
+                                    (varchar "r"))))
+                                 "}")]
+              [answer (expression-datum->expression expression/list)])
+    (check-true (expression? answer))
+    (check-true (has-operator? answer))
+    (check-true (string? (expression-operator answer)))
+    (check-true (string=? "?" (expression-operator answer)))
+    (let-test ([vars (expression-variables answer)])
+      (check-true (list? vars))
+      (check-= 2 (length vars) 0)
+      (check-true (string? (first vars)))
+      (check-true (string=? "query" (first vars)))
+      (check-true (string? (second vars)))
+      (check-true (string=? "number" (second vars))))))
 
 (define (expand-token token template-variables)
   (cond ((text-token? token)
