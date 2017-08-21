@@ -1,7 +1,10 @@
 #lang racket/base
 
 (require (only-in racket/match
-                  match-let))
+                  match-let)
+         (only-in racket/list
+                  make-list
+                  range))
 
 (module+ test
   (require rackunit))
@@ -48,6 +51,7 @@
   (check-true (ipv4? "65.13.67.255"))
   (check-true (ipv4? "255.255.255.255"))
   (check-false (ipv4? "1"))
+  (check-false (ipv4? 127))
   (check-false (ipv4? #"127.0.0.1"))
   (check-false (ipv4? "000.000.000.000"))
   (check-false (ipv4? "310.142.873.9661"))
@@ -55,16 +59,51 @@
 
 ;; https://tools.ietf.org/html/rfc2373#section-2.2
 (define (ipv6? x)
+  (define (type-1? x)
+    (and (string? x)
+         (regexp-match-exact? #px"[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){7}" x)))
+  (define (type-2? x)
+    (and (string? x)
+         (not (regexp-match? "[^0-9a-fA-F:]" x))
+         (or (string=? x "::")
+             (and (regexp-match? "^::" x) ;; starts with "::"
+                  (let ([r (substring x 2)])
+                    (ormap (lambda (n)
+                             ;; substitue "::" with n copies of "0:"
+                             (let* ([appended (apply string-append (make-list n "0:"))]
+                                    [expanded (format "~a~a" appended r)])
+                               (or (type-1? expanded)
+                                   (type-3? expanded))))
+                           (range 1 7))))
+             (and (regexp-match? "::$" x) ;; starts with "::"
+                  (let ([r (substring x 0 (- (string-length x) 2))])
+                    (ormap (lambda (n)
+                             ;; substitue "::" with n copies of ":0"
+                             (let* ([appended (apply string-append (make-list n ":0"))]
+                                    [expanded (format "~a~a" appended r)])
+                               (or (type-1? expanded)
+                                   (type-3? expanded))))
+                           (range 1 7))))
+             (let ([m (regexp-match "^(.+)::(.+)$" x)])
+               (and (list? m)
+                    (let ([before (list-ref m 1)]
+                          [after (list-ref m 2)])
+                      (ormap (lambda (n)
+                             ;; substitue "::" with n copies of "0:"
+                             (let* ([appended (apply string-append (make-list n ":0"))]
+                                    [expanded (format "~a:~a~a" before appended after)])
+                               (or (type-1? expanded)
+                                   (type-3? expanded))))
+                           (range 1 6))))))))
+  (define (type-3? x)
+    (and (string? x)
+         (let ([m (regexp-match? #px"^[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){5}(.+)$" x)])
+           (and (list? m)
+                (ipv4? (list-ref 1 m))))))
   (and (string? x)
-       (or ;; type 1
-        (regexp-match-exact? #px"([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}" x)
-        (and (regexp-match? #rx"::" x)
-             (regexp-match-exact? #px"[A-Fa-f0-9:]+" x)
-             ;; type 2 with double colon
-             ;; type 3 with double colon
-             )
-        ;; type 3 without double colon
-        (regexp-match-exact? #px"([A-Fa-f0-9]{1,4}:){5}[A-Fa-f0-9]{1,4}:([1-9][0-9]{0,2}[.]){3}[1-9][0-9]{0,2}" x))))
+       (or (type-1? x)
+           (type-2? x)
+           (type-3? x))))
 
 (provide ipv6?)
 
@@ -84,7 +123,10 @@
   (check-true (ipv6? "1080::8:800:200C:417A"))
   (check-true (ipv6? "FF01::101"))
   (check-true (ipv6? "::1"))
+  (check-false (ipv6? "::1::"))
   (check-true (ipv6? "::"))
+  (check-false (ipv6? ":::"))
+  (check-false (ipv6? "1080::8:800:200C:417A"))
 
   ;; type 3
   (check-true (ipv6? "0:0:0:0:0:0:13.1.68.3"))
