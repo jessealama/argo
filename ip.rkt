@@ -60,47 +60,55 @@
 ;; https://tools.ietf.org/html/rfc2373#section-2.2
 (define (ipv6? x)
   (define (type-1? x)
-    (and (string? x)
-         (regexp-match-exact? #px"[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){7}" x)))
+    (regexp-match-exact? #px"[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){7}" x))
+  (define (type-2/complete? x)
+    (string=? x "::"))
+  (define (type-2/begin? x)
+    (and (regexp-match? #rx"^::" x) ;; starts with "::"
+         (let ([r (substring x 2)])
+           (ormap (lambda (n)
+                    ;; substitue "::" with n copies of "0:"
+                    (let* ([appended (apply string-append (make-list n "0:"))]
+                           [expanded (format "~a~a" appended r)])
+                      (or (type-1? expanded)
+                          (type-3? expanded))))
+                  (range 1 8)))))
+  (define (type-2/end? x)
+    (and (regexp-match? #rx"::$" x) ;; ends with "::"
+         (let ([r (substring x 0 (- (string-length x) 2))])
+           (ormap (lambda (n)
+                    ;; substitue "::" with n copies of ":0"
+                    (let* ([appended (apply string-append (make-list n ":0"))]
+                           [expanded (format "~a~a" appended r)])
+                      (or (type-1? expanded)
+                          (type-3? expanded))))
+                  (range 1 8)))))
+  (define (type-2/middle? x)
+    (let ([m (regexp-match #rx"^(.+)::(.+)$" x)])
+      (and (list? m)
+           (let ([before (list-ref m 1)]
+                 [after (list-ref m 2)])
+             ;; (log-error "before = \"~a\"" before)
+             ;; (log-error "after = \"~a\"" after)
+             (ormap (lambda (n)
+                      ;; substitue "::" with n copies of "0:"
+                      (let* ([appended (apply string-append (make-list n "0:"))]
+                             [expanded (format "~a:~a~a" before appended after)])
+                        ;; (log-error (format "trying \"~a\"" expanded))
+                        (or (type-1? expanded)
+                            (type-3? expanded))))
+                    (range 1 7))))))
   (define (type-2? x)
-    (and (string? x)
-         (not (regexp-match? "[^0-9a-fA-F:]" x))
-         (or (string=? x "::")
-             (and (regexp-match? "^::" x) ;; starts with "::"
-                  (let ([r (substring x 2)])
-                    (ormap (lambda (n)
-                             ;; substitue "::" with n copies of "0:"
-                             (let* ([appended (apply string-append (make-list n "0:"))]
-                                    [expanded (format "~a~a" appended r)])
-                               (or (type-1? expanded)
-                                   (type-3? expanded))))
-                           (range 1 7))))
-             (and (regexp-match? "::$" x) ;; starts with "::"
-                  (let ([r (substring x 0 (- (string-length x) 2))])
-                    (ormap (lambda (n)
-                             ;; substitue "::" with n copies of ":0"
-                             (let* ([appended (apply string-append (make-list n ":0"))]
-                                    [expanded (format "~a~a" appended r)])
-                               (or (type-1? expanded)
-                                   (type-3? expanded))))
-                           (range 1 7))))
-             (let ([m (regexp-match "^(.+)::(.+)$" x)])
-               (and (list? m)
-                    (let ([before (list-ref m 1)]
-                          [after (list-ref m 2)])
-                      (ormap (lambda (n)
-                             ;; substitue "::" with n copies of "0:"
-                             (let* ([appended (apply string-append (make-list n ":0"))]
-                                    [expanded (format "~a:~a~a" before appended after)])
-                               (or (type-1? expanded)
-                                   (type-3? expanded))))
-                           (range 1 6))))))))
+    (or (type-2/complete? x)
+        (type-2/begin? x)
+        (type-2/end? x)
+        (type-2/middle? x)))
   (define (type-3? x)
-    (and (string? x)
-         (let ([m (regexp-match? #px"^[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){5}(.+)$" x)])
-           (and (list? m)
-                (ipv4? (list-ref 1 m))))))
+    (let ([m (regexp-match #px"^[[:xdigit:]]{1,4}([:][[:xdigit:]]{1,4}){5}[:](.+)$" x)])
+      (and (list? m)
+           (ipv4? (list-ref m 2)))))
   (and (string? x)
+       (not (regexp-match? "[^0-9a-fA-F:.]" x))
        (or (type-1? x)
            (type-2? x)
            (type-3? x))))
@@ -118,6 +126,7 @@
   (check-true (ipv6? "FF01:0:0:0:0:0:0:101"))
   (check-true (ipv6? "0:0:0:0:0:0:0:1"))
   (check-true (ipv6? "0:0:0:0:0:0:0:0"))
+  (check-true (ipv6? "FF01:0:0:0:0:0:0:101"))
 
   ;; type 2
   (check-true (ipv6? "1080::8:800:200C:417A"))
@@ -126,7 +135,7 @@
   (check-false (ipv6? "::1::"))
   (check-true (ipv6? "::"))
   (check-false (ipv6? ":::"))
-  (check-false (ipv6? "1080::8:800:200C:417A"))
+  (check-true (ipv6? "1080::8:800:200C:417A"))
 
   ;; type 3
   (check-true (ipv6? "0:0:0:0:0:0:13.1.68.3"))
