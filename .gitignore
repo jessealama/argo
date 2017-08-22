@@ -4,3 +4,11 @@
 .DS_Store
 compiled/
 /doc/
+/scribblings/argo.html
+/scribblings/manual-fonts.css
+/scribblings/manual-racket.css
+/scribblings/manual-racket.js
+/scribblings/manual-style.css
+/scribblings/racket.css
+/scribblings/scribble-common.js
+/scribblings/scribble.css
