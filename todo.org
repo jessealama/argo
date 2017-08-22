@@ -1,4 +1,14 @@
+* TODO Version 0.1 [1/3]
+  In version 0.1, I envision a library for JSON validation. No binary.
+  - [ ] Basic Scribble documentation
+  - [ ] Complete info.rkt (description is missing, at a minimum)
+  - [X] Declare dependencies
+** What's NOT in the initial version
+   A binary (it's a library)
+
+   No raco integration
 * Schema validation
+  That is, checking whether jsexpr? is a JSON Schema.
 ** Positive [2/35]
    - [X] multipleOf
    - [ ] maximum
@@ -210,3 +220,4 @@
 *** DONE Get the tests to work
 *** DONE Add tests from the Space Telescope Science Institute example
     https://spacetelescope.github.io/understanding-json-schema/structuring.html
+* TODO Library documentation
