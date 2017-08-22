@@ -135,10 +135,8 @@
 ;; punt and use a function from the mutt package that probably
 ;; covers what I need in many cases
 (define (email? x)
-  (cond ((not (string? x))
-         #f)
-        (else
-         (string? (mutt:email? x)))))
+  (and (string? x)
+       (string? (mutt:email? x))))
 
 (module+ test
   (check-true (email? "hi@bye.com"))
