@@ -135,7 +135,9 @@
   (check-false (ipv6? "::1::"))
   (check-true (ipv6? "::"))
   (check-false (ipv6? ":::"))
+  (check-false (ipv6? ":::1"))
   (check-true (ipv6? "1080::8:800:200C:417A"))
+  (check-false (ipv6? "1080::91FF:54AB:8:800:200C:417A:0094"))
 
   ;; type 3
   (check-true (ipv6? "0:0:0:0:0:0:13.1.68.3"))
