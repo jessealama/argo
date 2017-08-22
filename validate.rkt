@@ -66,8 +66,7 @@
 (define (valid-wrt-schema/boolean? data schema)
   (json-true-value? schema))
 
-;; assumes that schema is a json-object? value
-(define (valid-wrt-schema? data schema)
+(define (adheres-to-schema? data schema)
   (unless (jsexpr? data)
     (raise-user-error "Data is not a jsexpr? value." data))
   (unless (jsexpr? schema)
