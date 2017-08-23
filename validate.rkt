@@ -62,10 +62,6 @@
 (require (only-in racket/list
                   check-duplicates))
 
-;; assumes that schema is a json-boolean? value
-(define (valid-wrt-schema/boolean? data schema)
-  (json-true-value? schema))
-
 (define (adheres-to-schema? data schema)
   (unless (jsexpr? data)
     (raise-user-error "Data is not a jsexpr? value." data))
