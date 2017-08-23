@@ -6,10 +6,6 @@
 (require (only-in racket/match
                   match-let))
 
-(require (prefix-in mutt:
-                    (only-in mutt
-                             email?)))
-
 (require (only-in net/url-string
                   url-regexp
                   url->string
@@ -135,8 +131,11 @@
 ;; punt and use a function from the mutt package that probably
 ;; covers what I need in many cases
 (define (email? x)
+  (define atext "[A-Za-z0-9!#$%&'*+-/=?^_`{|}~]+")
+  (define dot-atom (format "([.]~a)*" atext))
+  (define pattern (format "~a~a[@]~a~a" atext dot-atom atext dot-atom))
   (and (string? x)
-       (string? (mutt:email? x))))
+       (regexp-match-exact? (pregexp pattern) x)))
 
 (module+ test
   (check-true (email? "hi@bye.com"))
