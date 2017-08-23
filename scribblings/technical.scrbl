@@ -7,7 +7,19 @@
 
 @section{Semantic validation}
 
-Argo supports all the semantic validation keywords: "date-time", "email", "hostname", "ipv4", "ipv6", "uri", "uri-reference", "uri-template", and "json-pointer".
+Argo supports all the semantic validation keywords:
+
+@listitems[
+  @item{@tt{date-time} (RFC 3399 timestamps, similar to }
+  @item{@tt{email}}
+  @item{@tt{hostname}}
+  @item{@tt{ipv4}}
+  @item{@tt{ipv6}}
+  @item{@tt{uri}}
+  @item{@tt{uri-reference}}
+  @item{@tt{uri-template}, and}
+  @item{@tt{json-pointer}}
+]
 
 @section{JSON Schema versions}
 
