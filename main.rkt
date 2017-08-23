@@ -10,7 +10,7 @@
 (require (only-in (file "schema.rkt")
                   json-schema?))
 (require (only-in (file "validate.rkt")
-                  valid-wrt-schema?))
+                  adheres-to-schema?))
 (require (only-in racket/cmdline
                   command-line))
 
@@ -50,6 +50,5 @@
     (complain-and-die (format "Instance at \"~a\" is not well-formed JSON." instance-path)))
   (unless (json-schema? schema/jsexpr)
     (complain-and-die (format "Schema at \"~a\" is not a JSON schema.")))
-  (exit (if (valid-wrt-schema? instance/jsexpr schema/jsexpr)
-            0
-            1)))
+  (define adheres? (adheres-to-schema? instance/jsexpr schema/jsexpr))
+  (exit (if adheres? 0 1)))

@@ -98,7 +98,7 @@
                     (resolve-schema-wrt-id (get '$ref) (current-id) original-schema))
                   ; (log-error (format "resolved schema = ~a" resolved-schema))
                   (cond (loaded?
-                         (and (valid-wrt-schema? data resolved-schema)
+                         (and (adheres-to-schema? data resolved-schema)
                               (valid-w/o? '$ref)))
                         (else
                          (log-error (format "Failed to resolve schema at \"~a\". (Or it is not a JSON schema.)" (get '$ref)))
@@ -346,4 +346,4 @@
            (raise-user-error "Schema should be either a JSON boolean or a JSON object." schema))))
   (valid? data schema))
 
-(provide valid-wrt-schema?)
+(provide adheres-to-schema?)
