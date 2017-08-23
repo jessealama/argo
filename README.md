@@ -1,3 +1,4 @@
-argo
+Argo: Go forth and validate your JSON
 ====
-README text here.
+
+Argo is a JSON Schema validator for Racket. It aims to adhere to version 6 of the JSON Schema specification.
