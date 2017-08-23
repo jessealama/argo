@@ -12,7 +12,7 @@ all: $(htmls)
 clean:
 	find . -mindepth 1 -maxdepth 1 -type f -name '*~' -delete
 	find . -mindepth 1 -maxdepth 1 -type f -name '*.html' -delete
-	find . -mindepth 1 -maxdepth 1 -type d ! -name '.git' -exec basename {} ';' | parallel --jobs=1 $(MAKE) --directory="{}" --stop --jobs=1 clean
+	find . -mindepth 1 -maxdepth 1 -type d ! -name '.git' ! -name 'compiled' -exec basename {} ';' | parallel --jobs=1 $(MAKE) --directory="{}" --stop --jobs=1 clean
 
 test:
 	# nothing to do (yet)
