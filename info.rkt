@@ -1,8 +1,7 @@
 #lang info
 (define collection "argo")
 (define deps '("base"
-               "rackunit-lib"
-	       "mutt"))
+               "rackunit-lib"))
 (define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
 (define scribblings '(("scribblings/argo.scrbl" ())))
 (define pkg-desc "Argo is a JSON Schema validator.")
