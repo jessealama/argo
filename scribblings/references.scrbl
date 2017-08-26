@@ -5,11 +5,17 @@
 
 @title{Further reading}
 
-See also:
+To learn more about JSON Schema, go to the source:
 
-* http://json-schema.org
+@itemlist[
+  @item{@url{http://json-schema.org}}
+]
 
-More specifically,
+The specificiations that Argo aims to follow are in two documents:
 
-* http://json-schema.org/latest/json-schema-core.html
-* http://json-schema.org/latest/json-schema-validation.html
+@itemlist[
+  @item{@hyperlink{JSON Schema Core}{http://json-schema.org/latest/json-schema-core.html}}
+  @item{@hyperlink{JSON Schema Validation}{http://json-schema.org/latest/json-schema-validation.html}}
+]
+
+(The third part of the JSON Schema specification that is currently @italic{not} implemented by Argo is @hyperlink{JSON Hyper-Schema}{http://json-schema.org/latest/json-schema-hypermedia.html}.)
