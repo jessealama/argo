@@ -52,3 +52,6 @@
     (complain-and-die (format "Schema at \"~a\" is not a JSON schema.")))
   (define adheres? (adheres-to-schema? instance/jsexpr schema/jsexpr))
   (exit (if adheres? 0 1)))
+
+(provide adheres-to-schema?
+         json-schema?)
