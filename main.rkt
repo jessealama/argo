@@ -54,4 +54,5 @@
   (exit (if adheres? 0 1)))
 
 (provide adheres-to-schema?
-         json-schema?)
+         json-schema?
+         check-json/schema)
