@@ -1,7 +1,7 @@
-* TODO Version 0.1 [1/3]
+* DONE Version 0.1 [3/3]
   In version 0.1, I envision a library for JSON validation. No binary.
-  - [ ] Basic Scribble documentation
-  - [ ] Complete info.rkt (description is missing, at a minimum)
+  - [X] Basic Scribble documentation
+  - [X] Complete info.rkt (description is missing, at a minimum)
   - [X] Declare dependencies
 ** What's NOT in the initial version
    A binary (it's a library)
@@ -220,4 +220,4 @@
 *** DONE Get the tests to work
 *** DONE Add tests from the Space Telescope Science Institute example
     https://spacetelescope.github.io/understanding-json-schema/structuring.html
-* TODO Library documentation
+* DONE Library documentation
