@@ -63,12 +63,6 @@
                   check-duplicates))
 
 (define (adheres-to-schema? data schema)
-  (unless (jsexpr? data)
-    (raise-user-error "Data is not a jsexpr? value." data))
-  (unless (jsexpr? schema)
-    (raise-user-error "Schema is not a jsexpr? value." schema))
-  (unless (json-schema? schema)
-    (raise-user-error "Scheme is not a JSON schema."))
   (define original-schema schema)
   ;; (log-error (format "original data = ~a" data))
   ;; (log-error (format "original schema = ~a" schema))
@@ -334,12 +328,36 @@
                                ((string=? f "json-pointer")
                                 (json-pointer? data))
                                (else
-                                (error "Unknown format: " f)))
+                                (log-error "Unknown format: " f)
+                                #f))
                          (valid-w/o? 'format))))
                  (else
                   #t)))
           (else
-           (raise-user-error "Schema should be either a JSON boolean or a JSON object." schema))))
-  (valid? data schema))
+           #f)))
+  (and (jsexpr? data)
+       (json-schema? schema)
+       (valid? data schema)))
 
 (provide adheres-to-schema?)
+
+(define (check-json/schema data schema)
+  (cond ((not (jsexpr? data))
+         (raise-argument-error 'data "jsexpr?" data))
+        ((not (jsexpr? schema))
+         (raise-argument-error 'schema "jsexpr?" schema))
+        ((not (json-schema? schema))
+         (raise-argument-error 'schema "JSON Schema" schema))
+        ((not (adheres-to-schema? data schema))
+         (error "Data does not adhere to schema."))
+        (else
+         void)))
+
+(module+ test
+  (check-exn exn:fail:contract? (lambda () (check-json/schema 'no-way (hasheq))))
+  (check-exn exn:fail:contract? (lambda () (check-json/schema "frothy" 'jose)))
+  (check-exn exn:fail:contract? (lambda () (check-json/schema 5 5)))
+  (check-exn exn:fail? (lambda () (check-json/schema 0 #f)))
+  (check-eq? void (check-json/schema "right about now" #t)))
+
+(provide check-json/schema)
