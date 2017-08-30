@@ -155,7 +155,8 @@
                                                     (valid? i s))])
                                       (andmap identity checks)))
                                    (else
-                                    (error "Value of items is neither a JSON schema nor an array.")))
+                                    (log-error "Value of items is neither a JSON schema nor an array.")
+                                    #f))
                              (valid-w/o? 'items)))
                       (valid-w/o? 'items)))
                  ((has? 'additionalItems)
@@ -258,7 +259,8 @@
                                   ((json-object? dependency-value)
                                    (valid? data dependency-value))
                                   (else
-                                   (error "Unexpected non-array, non-object dependency value:" dependency-value))))))
+                                   (log-error "Unexpected non-array, non-object dependency value:" dependency-value)
+                                   #f)))))
                     (cond ((json-object? data)
                            (and (andmap (lambda (prop)
                                           (satisfies-dependency? prop
