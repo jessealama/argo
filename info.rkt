@@ -11,3 +11,6 @@
 (define pkg-desc "Argo is a JSON Schema validator.")
 (define version "0.1")
 (define pkg-authors '("jesse@lisp.sh"))
+
+(define raco-commands
+  '(("validate" commands/validate "validate JSON against a JSON Schema" 100)))
