@@ -2,13 +2,13 @@
 
 @title{Shortcomings and sorely missing features}
 
-Argo suffers from the some known deficiencies.
+Argo suffers from some known deficiencies.
 
 @section{Hypermedia keywords unsupported}
 
 JSON Schema defines Hypermedia keywords (base, links, media) are currently not supported. When these properties are encountered on a JSON schema, they are silently ignored. If you work with JSON schema that rely on these features, it will almost certainly not work with Argo. (Meanining: validation will produce many false negatives and maybe even some false positives.)
 
-@section{Error reporting}
+@section[#:tag "error-reporting"]{Error reporting}
 
 Error reporting is largely (or should I say, entirely) missing. Thus, if a JSON document is not valid according to a JSON schema, you just get @racket[#f]. You don't get a description of @italic{why} the document fails validation.
 

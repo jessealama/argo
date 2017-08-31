@@ -1,9 +1,8 @@
 #lang scribble/manual
 
-@require[@for-label[racket/base
-		    json]]
+@require[@for-label[racket/base json]]
 
-@title{Interface}
+@title{Library interface}
 
 @defproc[
 (json-schema?

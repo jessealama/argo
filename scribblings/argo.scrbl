@@ -3,7 +3,7 @@
 @require[@for-label[racket/base
 		    json]]
 
-@title[#:style "toc"]{Argo: JSON Schema Validator}
+@title[#:style "toc"]{Argo: JSON Schema Adventures}
 @author[(author+email "Jesse Alama" "jesse@lisp.sh")]
 
 @defmodule[argo]
@@ -13,6 +13,8 @@ Argo is a JSON Schema validator. Work with your JSON data knowing that it adhere
 Argo is a library that exports only one function: @racket[adheres-to-schema?]. That function takes a JSON Schema and a JSON document and returns a boolean value. @racket[#t] means that the document adheres to the schema; @racket[#f] means it does not.
 
 @include-section["installation.scrbl"]
+
+@include-section["running.scrbl"]
 
 @include-section["interface.scrbl"]
 
