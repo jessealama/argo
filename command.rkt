@@ -1,28 +1,53 @@
 #lang racket/base
 
 (require json)
-(require (only-in (file "../util.rkt")
+(require (only-in (file "util.rkt")
                   file-content/bytes
                   bytes->string
                   complain-and-die))
-(require (only-in (file "../parse.rkt")
+(require (only-in (file "parse.rkt")
                   parse-json-string))
-(require (only-in (file "../schema.rkt")
+(require (only-in (file "schema.rkt")
                   json-schema?))
-(require (only-in (file "../validate.rkt")
+(require (only-in (file "validate.rkt")
                   adheres-to-schema?))
 (require (only-in racket/cmdline
                   command-line))
+(require (only-in racket/vector
+                  vector-drop))
 (require raco/command-name)
 
-(module+ test
-  (require rackunit))
+;; adapted from Matthew Butterick's pollen
+;;
+;; thanks, Matthew!
 
-(module+ main
+(module+ raco
+  (define command-name (with-handlers ([exn:fail? (λ _ #f)])
+                         (vector-ref (current-command-line-arguments) 0)))
+  (dispatch command-name))
+
+(define (dispatch command-name)
+  (case command-name
+    [(#f "help") (handle-help)]
+    [("validate") (handle-validate)] ; parses its own args
+    [else (handle-unknown command-name)]))
+
+(define (handle-unknown command)
+  (displayln (format "`~a` is an unknown Argo command." command))
+  (display "These are the available ") ; ... "Argo commands:"
+  (handle-help))
+
+(define (handle-help)
+  (displayln (format "Argo commands:
+help                       show this message
+validate [schema] [data]   validate data against schema")))
+
+(define (handle-validate)
   (define quiet-mode? (make-parameter #f))
   (define-values (schema-path instance-path)
     (command-line
-     #:program (short-program+command-name)
+     #:program "raco argo validate"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "validate" from the fron
      #:once-each
      [("--quiet") "Write nothing to stdout."
                   (quiet-mode? #f)]
