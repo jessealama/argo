@@ -3,7 +3,7 @@
 .\#*
 .DS_Store
 compiled/
-/argo/doc/
+/doc/
 /scribblings/argo.html
 /scribblings/manual-fonts.css
 /scribblings/manual-racket.css
