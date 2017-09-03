@@ -6,9 +6,12 @@
                   bytes->string
                   complain-and-die))
 (require (only-in (file "parse.rkt")
-                  parse-json-string))
+                  parse-json-string
+                  parse-json-file))
 (require (only-in (file "schema.rkt")
                   json-schema?))
+(require (only-in (file "json.rkt")
+                  json-equal?))
 (require (only-in (file "validate.rkt")
                   adheres-to-schema?))
 (require (only-in racket/cmdline
@@ -30,6 +33,7 @@
   (case command-name
     [(#f "help") (handle-help)]
     [("validate") (handle-validate)] ; parses its own args
+    [("equal") (handle-equal)]
     [else (handle-unknown command-name)]))
 
 (define (handle-unknown command)
@@ -40,14 +44,15 @@
 (define (handle-help)
   (displayln (format "Argo commands:
 help        show this message
-validate    validate data against schema")))
+validate    validate data against schema
+equal       check whether two JSON files are equal")))
 
 (define (handle-validate)
   (define quiet-mode? (make-parameter #f))
   (define-values (schema-path instance-path)
     (command-line
      #:program "raco argo validate"
-     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "validate" from the fron
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "validate" from the command
      #:once-each
      [("--quiet") "Write nothing to stdout."
                   (quiet-mode? #f)]
@@ -77,9 +82,46 @@ validate    validate data against schema")))
   (unless (json-schema? schema/jsexpr)
     (complain-and-die (format "Schema at \"~a\" is not a JSON schema.")))
   (define adheres? (adheres-to-schema? instance/jsexpr schema/jsexpr))
-  (unless (quiet-mode?)
-    (display (if adheres?
-                 "Validation succeeded."
-                 "Validation failed."))
-    (newline))
-  (exit (if adheres? 0 1)))
+  (cond ((quiet-mode?)
+         (exit (if adheres? 0 1)))
+        (else
+         (display (if adheres?
+                      "Validation succeeded."
+                      "Validation failed."))
+         (newline)
+         (exit 0))))
+
+(define (handle-equal)
+  (define quiet-mode? (make-parameter #f))
+  (define-values (instance-path-1 instance-path-2)
+    (command-line
+     #:program "raco argo equal"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "equals" from the command
+     #:once-each
+     [("--quiet") "Write nothing to stdout."
+                  (quiet-mode? #f)]
+     #:args (path-1 path-2)
+     (values path-1 path-2)))
+  (unless (file-exists? instance-path-1)
+    (complain-and-die (format "\"~a\" does not exist." instance-path-1)))
+  (unless (file-exists? instance-path-2)
+    (complain-and-die (format "\"~a\" does not exist." instance-path-2)))
+  (define-values (instance-1-jsexpr instance-1-well-formed?)
+    (parse-json-file instance-path-1))
+  (unless instance-1-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              instance-path-1)))
+  (define-values (instance-2-jsexpr instance-2-well-formed?)
+    (parse-json-file instance-path-2))
+  (unless instance-2-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              instance-path-2)))
+  (define equal-json? (json-equal? instance-1-jsexpr instance-2-jsexpr))
+  (cond ((quiet-mode?)
+         (exit (if json-equal? 0 1)))
+        (else
+         (display (if equal-json?
+                      "JSON files are equal."
+                      "JSON files are not equal."))
+         (newline)
+         (exit 0))))
