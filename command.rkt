@@ -34,7 +34,8 @@
 (define (dispatch command-name)
   (case command-name
     [(#f "help") (handle-help)]
-    [("validate") (handle-validate)] ; parses its own args
+    [("validate") (handle-validate)]
+    [("schema") (handle-schema)]
     [("equal") (handle-equal)]
     [else (handle-unknown command-name)]))
 
@@ -47,6 +48,7 @@
   (displayln (format "Argo commands:
 help        show this message
 validate    validate data against schema
+schema      check whether a JSON file is a schema
 equal       check whether two JSON files are equal")))
 
 (define (handle-validate)
@@ -123,5 +125,32 @@ equal       check whether two JSON files are equal")))
          (display (if equal-json?
                       "JSON files are equal."
                       "JSON files are not equal."))
+         (newline)
+         (exit 0))))
+
+(define (handle-schema)
+  (define schema-path
+    (command-line
+     #:program "raco argo schema"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "schema" from the command
+     #:once-each
+     [("--quiet") "Write nothing to stdout."
+                  (quiet-mode? #f)]
+     #:args (path)
+     path))
+  (unless (file-exists? schema-path)
+    (complain-and-die (format "\"~a\" does not exist." schema-path)))
+  (define-values (schema-jsexpr schema-well-formed?)
+    (parse-json-file schema-path))
+  (unless schema-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              schema-path)))
+  (define schema? (json-schema? schema-jsexpr))
+  (cond ((quiet-mode?)
+         (exit (if schema? 0 1)))
+        (else
+         (display (if schema?
+                      "JSON file is a schema."
+                      "JSON file is not a schema."))
          (newline)
          (exit 0))))
