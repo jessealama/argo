@@ -39,8 +39,8 @@
 
 (define (handle-help)
   (displayln (format "Argo commands:
-help                       show this message
-validate [schema] [data]   validate data against schema")))
+help                   show this message
+validate schema data   validate data against schema")))
 
 (define (handle-validate)
   (define quiet-mode? (make-parameter #f))
