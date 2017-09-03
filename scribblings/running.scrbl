@@ -5,8 +5,10 @@
 
 @title{Running Argo}
 
-Argo can be executed as a command-line tool using @tt{raco}. This section discusses the two available commands: @tt{validate} and @tt{equal}.
+Argo can be executed as a command-line tool using @tt{raco}. This section discusses the three available commands: @tt{validate}, @tt{schema}, and @tt{equal}.
 
 @include-section["command-validate.scrbl"]
+
+@include-section["command-schema.scrbl"]
 
 @include-section["command-equal.scrbl"]
