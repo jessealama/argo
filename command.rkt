@@ -24,6 +24,8 @@
 ;;
 ;; thanks, Matthew!
 
+(define quiet-mode? (make-parameter #f))
+
 (module+ raco
   (define command-name (with-handlers ([exn:fail? (λ _ #f)])
                          (vector-ref (current-command-line-arguments) 0)))
@@ -48,7 +50,6 @@ validate    validate data against schema
 equal       check whether two JSON files are equal")))
 
 (define (handle-validate)
-  (define quiet-mode? (make-parameter #f))
   (define-values (schema-path instance-path)
     (command-line
      #:program "raco argo validate"
@@ -92,7 +93,6 @@ equal       check whether two JSON files are equal")))
          (exit 0))))
 
 (define (handle-equal)
-  (define quiet-mode? (make-parameter #f))
   (define-values (instance-path-1 instance-path-2)
     (command-line
      #:program "raco argo equal"
