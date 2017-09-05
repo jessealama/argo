@@ -41,6 +41,7 @@
     [(#f "help") (handle-help)]
     [("validate") (handle-validate)]
     [("schema") (handle-schema)]
+    [("pp") (handle-pretty-print)]
     [("equal") (handle-equal)]
     [("point") (handle-point)]
     [else (handle-unknown command-name)]))
