@@ -1,6 +1,8 @@
 #lang racket/base
 
-(require json)
+(require (only-in json
+                  jsexpr?
+                  jsexpr->string))
 (require (only-in (file "util.rkt")
                   file-content/bytes
                   bytes->string
@@ -14,6 +16,9 @@
                   json-equal?))
 (require (only-in (file "validate.rkt")
                   adheres-to-schema?))
+(require (only-in (file "pointer.rkt")
+                  json-pointer?
+                  pointer-value))
 (require (only-in racket/cmdline
                   command-line))
 (require (only-in racket/vector
@@ -37,6 +42,7 @@
     [("validate") (handle-validate)]
     [("schema") (handle-schema)]
     [("equal") (handle-equal)]
+    [("point") (handle-point)]
     [else (handle-unknown command-name)]))
 
 (define (handle-unknown command)
@@ -49,7 +55,8 @@
 help        show this message
 validate    validate data against schema
 schema      check whether a JSON file is a schema
-equal       check whether two JSON files are equal")))
+equal       check whether two JSON files are equal
+point       evaluate a JSON Pointer expression")))
 
 (define (handle-validate)
   (define-values (schema-path instance-path)
@@ -152,5 +159,39 @@ equal       check whether two JSON files are equal")))
          (display (if schema?
                       "JSON file is a schema."
                       "JSON file is not a schema."))
+         (newline)
+         (exit 0))))
+
+(define (handle-point)
+  (define-values (json-path json-pointer)
+    (command-line
+     #:program "raco argo point"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "point" from the command
+     #:once-each
+     [("--quiet") "Write nothing to stdout."
+                  (quiet-mode? #f)]
+     #:args (json-path json-pointer-expression)
+     (values json-path json-pointer-expression)))
+  (unless (file-exists? json-path)
+    (complain-and-die (format "\"~a\" does not exist." json-path)))
+  (define-values (jsexpr js-well-formed?)
+    (parse-json-file json-path))
+  (unless js-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              json-path)))
+  (unless (json-pointer? json-pointer)
+    (complain-and-die (format "\"~a\" is a malformed JSON Pointer expression.")))
+  (define failed? #f)
+  (define reference
+    (with-handlers ([exn:fail? (lambda (e) (set! failed? #t))])
+      (pointer-value json-pointer jsexpr)))
+  (cond ((quiet-mode?)
+         (exit (if failed? 1 0)))
+        (failed?
+         (display "Pointer refers to nothing.")
+         (newline)
+         (exit 1))
+        (else
+         (display (jsexpr->string reference))
          (newline)
          (exit 0))))
