@@ -21,7 +21,10 @@
 
 (require (only-in racket/list
                   take
-                  last))
+                  last
+                  rest
+                  first
+                  empty?))
 
 (require (only-in racket/string
                   string-split))
@@ -39,11 +42,21 @@
   (format "~a~a" (make-pad indentation) str))
 
 (define (indent-lines/list lines indentation)
-  (foldr (lambda (a b)
-           (format "~a~%~a" a b))
-         ""
-         (map (lambda (line) (indent-line line indentation))
-              lines)))
+  (cond ((empty? lines)
+         (make-pad indentation))
+        ((empty? (rest lines))
+         (indent-line (first lines) indentation))
+        (else
+         (format "~a~%~a"
+                 (indent-line (first lines) indentation)
+                 (indent-lines/list (rest lines) indentation)))))
+
+(module+ test
+  (check-equal? "" (indent-lines/list (list) 0))
+  (check-equal? "a" (indent-lines/list (list "a") 0))
+  (check-equal? "  a" (indent-lines/list (list "a") 1))
+  (check-equal? "hi\nthere" (indent-lines/list (list "hi" "there") 0))
+  (check-equal? "    ahlan\n    thabatat" (indent-lines/list (list "ahlan" "thabatat") 2)))
 
 (define (explode-lines str)
   (string-split str "\n"))
@@ -67,7 +80,7 @@
              ((json-boolean? x)
               (if x "true" "false"))
              ((json-string? x)
-              (format "~a" x))
+              (format "\"~a\"" x))
              ((json-array? x)
               (let ([num-items (array-length x)]
                     [items (array-items x)])
@@ -85,7 +98,7 @@
                            (newline))
 
                       ;; last item
-                      (display (pp (last items) (+ level 1)))
+                      (display (pp (last items) 1))
                       (newline)
                       (display "]"))))))
              ((json-object? x)
@@ -108,7 +121,7 @@
                         (let ([final (last props)])
                           (display (format "\"~a\": " final))
                           (display (pp (property-value x final) 1))))
-                      (newline )
+                      (newline)
                       (display "}"))))))
              (else
               (error "Unhandled JSON data:" x))))))
@@ -126,7 +139,7 @@
   (check-equal? (json-pretty-print (list))
                 "[]")
   (check-equal? (json-pretty-print (make-string 1 #\nul))
-                "fuck")
+                "\"\\u0000\"")
   (check-equal? (json-pretty-print "üff då phô")
                 "\"üff då phô\"")
   (check-equal? (json-pretty-print (hasheq))
@@ -139,10 +152,4 @@
 ]")
   (let ([obj (hasheq 'some "pig" 'pig 'null)])
     (let ([rendered (json-pretty-print obj)])
-      (check-true (or (string=? rendered "{
-  \"some\": \"pig\",
-  \"pig\": null
-}") (string=? rendered "{
-  \"pig\": null,
-  \"some\": \"pig\"
-}")) rendered))))
+      (check-true (or (string=? rendered "{\n\"some\": \"pig\",\n\"pig\": null\n}") (string=? rendered "{\n\"pig\": null,\n\"some\": \"pig\"\n}")) rendered))))
