@@ -27,7 +27,8 @@
                   empty?))
 
 (require (only-in racket/string
-                  string-split))
+                  string-split
+                  string-trim))
 
 (module+ test
   (require rackunit))
@@ -72,60 +73,71 @@
     (define (indent str)
       (indent-lines/str str level))
     (let ([pad (make-pad level)])
-      (indent
-       (cond ((json-null? x)
-              "null")
-             ((json-number? x)
-              (format "~a" x))
-             ((json-boolean? x)
-              (if x "true" "false"))
-             ((json-string? x)
-              (format "~s" x))
-             ((json-array? x)
-              (let ([num-items (array-length x)]
-                    [items (array-items x)])
-                (if (= num-items 0)
-                    "[]"
-                  (with-output-to-string
-                    (lambda ()
-                      (display "[")
-                      (newline)
+      (cond ((json-null? x)
+             "null")
+            ((json-number? x)
+             (format "~a" x))
+            ((json-boolean? x)
+             (if x "true" "false"))
+            ((json-string? x)
+             (format "~s" x))
+            ((json-array? x)
+             (let ([num-items (array-length x)]
+                   [items (array-items x)])
+               (if (= num-items 0)
+                   "[]"
+                   (with-output-to-string
+                     (lambda ()
+                       (display "[")
+                       (newline)
 
-                      ;; all elements except the final one
-                      (for ([item (take items (- num-items 1))])
-                           (display (pp item 1))
+                       ;; all elements except the final one
+                       (for ([item (take items (- num-items 1))])
+                         (display (indent-lines/str (pp item 0) 1))
+                         (display ",")
+                         (newline))
+
+                       ;; last item
+                       (display (indent-lines/str (pp (last items) 0) 1))
+                       (newline)
+                       (display "]"))))))
+            ((json-object? x)
+             (let ([num-props (count-properties x)])
+               (if (= num-props 0)
+                   "{}"
+                   (with-output-to-string
+                     (lambda ()
+                       (display "{")
+                       (newline)
+                       (let ([pad (make-pad (+ level 1))]
+                             [props (object-properties x)])
+
+                         ;; all but final property
+                         (for ([prop (take props (- num-props 1))])
+                           (display (indent-line (format "\"~a\": " prop)
+                                                 1))
+                           (display (string-trim (indent-lines/str (pp (property-value x prop) 0) 1)
+                                                 " "
+                                                 #:left? #t
+                                                 #:right? #f
+                                                 #:repeat? #t))
                            (display ",")
                            (newline))
-
-                      ;; last item
-                      (display (pp (last items) 1))
-                      (newline)
-                      (display "]"))))))
-             ((json-object? x)
-              (let ([num-props (count-properties x)])
-                (if (= num-props 0)
-                    "{}"
-                  (with-output-to-string
-                    (lambda ()
-                      (display "{")
-                      (newline)
-                      (let ([pad (make-pad (+ level 1))]
-                            [props (object-properties x)])
-
-                        ;; all but final property
-                        (for ([prop (take props (- num-props 1))])
-                             (display (format "\"~a\": " prop))
-                             (display (pp (property-value x prop) 0))
-                             (display ",")
-                             (newline))
-                        (let ([final (last props)])
-                          (display (format "\"~a\": " final))
-                          (display (pp (property-value x final) 0))))
-                      (newline)
-                      (display "}"))))))
-             (else
-              (error "Unhandled JSON data:" x))))))
+                         (let ([final (last props)])
+                           (display (indent-line (format "\"~a\": " final)
+                                                 1))
+                           (display (string-trim (indent-lines/str (pp (property-value x final) 0) 1)
+                                                 " "
+                                                 #:left? #t
+                                                 #:right? #f
+                                                 #:repeat? #t))))
+                       (newline)
+                       (display "}"))))))
+            (else
+             (error "Unhandled JSON data:" x)))))
   (pp js 0))
+
+(provide json-pretty-print)
 
 (module+ test
   (check-equal? (json-pretty-print 'null)
