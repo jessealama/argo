@@ -80,7 +80,7 @@
              ((json-boolean? x)
               (if x "true" "false"))
              ((json-string? x)
-              (format "\"~a\"" x))
+              (format "~s" x))
              ((json-array? x)
               (let ([num-items (array-length x)]
                     [items (array-items x)])
