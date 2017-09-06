@@ -19,6 +19,8 @@
 (require (only-in (file "pointer.rkt")
                   json-pointer?
                   pointer-value))
+(require (only-in (file "pp.rkt")
+                  json-pretty-print))
 (require (only-in racket/cmdline
                   command-line))
 (require (only-in racket/vector
@@ -196,3 +198,21 @@ point       evaluate a JSON Pointer expression")))
          (display (jsexpr->string reference))
          (newline)
          (exit 0))))
+
+(define (handle-pretty-print)
+  (define-values (json-path)
+    (command-line
+     #:program "raco argo pp"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "pp" from the command
+     #:args (json-path)
+     (values json-path)))
+  (unless (file-exists? json-path)
+    (complain-and-die (format "\"~a\" does not exist." json-path)))
+  (define-values (jsexpr js-well-formed?)
+    (parse-json-file json-path))
+  (unless js-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              json-path)))
+  (display (json-pretty-print jsexpr))
+  (newline)
+  (exit 0))
