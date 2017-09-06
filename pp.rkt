@@ -115,12 +115,12 @@
                         ;; all but final property
                         (for ([prop (take props (- num-props 1))])
                              (display (format "\"~a\": " prop))
-                             (display (pp (property-value x prop) 1))
+                             (display (pp (property-value x prop) 0))
                              (display ",")
                              (newline))
                         (let ([final (last props)])
                           (display (format "\"~a\": " final))
-                          (display (pp (property-value x final) 1))))
+                          (display (pp (property-value x final) 0))))
                       (newline)
                       (display "}"))))))
              (else
