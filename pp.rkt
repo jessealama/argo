@@ -114,7 +114,7 @@
 
                          ;; all but final property
                          (for ([prop (take props (- num-props 1))])
-                           (display (indent-line (format "\"~a\": " prop)
+                           (display (indent-line (format "\"~s\": " prop)
                                                  1))
                            (display (string-trim (indent-lines/str (pp (property-value x prop) 0) 1)
                                                  " "
@@ -124,7 +124,7 @@
                            (display ",")
                            (newline))
                          (let ([final (last props)])
-                           (display (indent-line (format "\"~a\": " final)
+                           (display (indent-line (format "\"~s\": " final)
                                                  1))
                            (display (string-trim (indent-lines/str (pp (property-value x final) 0) 1)
                                                  " "
