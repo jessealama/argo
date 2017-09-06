@@ -46,6 +46,7 @@
     [("pp") (handle-pretty-print)]
     [("equal") (handle-equal)]
     [("point") (handle-point)]
+    [("support") (handle-support)]
     [else (handle-unknown command-name)]))
 
 (define (handle-unknown command)
@@ -215,4 +216,17 @@ point       evaluate a JSON Pointer expression")))
                               json-path)))
   (display (json-pretty-print jsexpr))
   (newline)
+  (exit 0))
+
+(define (handle-support)
+  (displayln "Argo needs your support!")
+  (newline)
+  (displayln "To support continued development of Argo, please consider making a donation.")
+  (displayln "Visit")
+  (newline)
+  (newline)
+  (displayln "          https://gum.co/argojson")
+  (newline)
+  (newline)
+  (displayln "to make a contribution. Thanks!")
   (exit 0))
