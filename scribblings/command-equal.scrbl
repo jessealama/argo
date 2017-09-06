@@ -15,15 +15,7 @@ raco argo equal json-1.json json-2.json
 
 Depending on whether the contents of @tt{json-1.json} and @tt{json-2.json} are the same content, you will see either @tt{JSON files are equal} or @tt{JSON files are not equal}.
 
-Equality of two JSON documents @tt{doc-1} and @tt{doc-2} is defined as follows: @tt{doc-1} and @tt{doc-2} have the same type (both are JSON objects, both are JSON strings, etc.) and adhere to the type-specific rules for equality, which are:
-
-@itemlist[
-  @item{two strings are equal is they are equal as Unicode strings (codepoint-for-codepoint equal sequences)}
-  @item{two null values are equal if they are both null}
-  @item{two number values are equal if they are mathematically equal representations of numbers in decimal notation}
-  @item{two objects are equal if they have precisely the same keys (which are JSON strings) and, for each key, their corresponding values are equal, and}
-  @item{two arrays are equal if they have the same length and if, for each  index, the value of the first array, at that index, is equal to the value at that index of the second array, at that index.}
-]
+See the documentation for @racket[json-equal?] to see the definition of what it means for two JSON documents to be equal.
 
 @section[#:tag "equal-exit-code"]{Exit code}
 
