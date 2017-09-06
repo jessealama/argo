@@ -60,7 +60,9 @@ help        show this message
 validate    validate data against schema
 schema      check whether a JSON file is a schema
 equal       check whether two JSON files are equal
-point       evaluate a JSON Pointer expression")))
+point       evaluate a JSON Pointer expression
+pp          pretty-print JSON
+support     how to support Argo development")))
 
 (define (handle-validate)
   (define-values (schema-path instance-path)
