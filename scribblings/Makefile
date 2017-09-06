@@ -6,8 +6,11 @@ htmls = $(addsuffix .html,$(scrbl-bases))
 
 all: argo.html
 
+view: argo.html
+	open $<
+
 %.html: %.scrbl
-	find . -mindepth 1 -maxdepth 1 -type f -name '*.scrbl' -exec basename {} ';' | parallel --jobs=1 --halt-on-error=now,fail=1 scribble {}
+	scribble $<
 
 clean:
 	find . -mindepth 1 -maxdepth 1 -type f -name '*~' -delete
