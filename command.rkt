@@ -18,7 +18,7 @@
                   adheres-to-schema?))
 (require (only-in (file "pointer.rkt")
                   json-pointer?
-                  pointer-value))
+                  json-pointer-value))
 (require (only-in (file "pp.rkt")
                   json-pretty-print))
 (require (only-in racket/cmdline
@@ -187,7 +187,7 @@ point       evaluate a JSON Pointer expression")))
   (define failed? #f)
   (define reference
     (with-handlers ([exn:fail? (lambda (e) (set! failed? #t))])
-      (pointer-value json-pointer jsexpr)))
+      (json-pointer-value json-pointer jsexpr)))
   (cond ((quiet-mode?)
          (exit (if failed? 1 0)))
         (failed?

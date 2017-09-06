@@ -25,7 +25,7 @@
 
 (require (only-in (file "pointer.rkt")
                   json-pointer?
-                  pointer-value))
+                  json-pointer-value))
 
 (require (only-in (file "util.rkt")
                   url-has-only-fragment?))
@@ -73,7 +73,7 @@
                   (unless (json-pointer? fragment)
                     (error "Fragment part of URL is not a JSON Pointer:" fragment)))
                 (cond ((url-has-only-fragment? ref)
-                       (values (pointer-value fragment document)
+                       (values (json-pointer-value fragment document)
                                #t))
                       ((string? (url-host ref))
                        (define url-w/o-fragment
@@ -98,7 +98,7 @@
                        (cond ((not well-formed?)
                               (values #f #f))
                              ((string? fragment)
-                              (values (pointer-value fragment schema) #f))
+                              (values (json-pointer-value fragment schema) #f))
                              (else
                               (values schema #t))))))
                (else

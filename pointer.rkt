@@ -104,7 +104,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; json-pointer? jsexpr?
-(define (pointer-value jp doc)
+(define (json-pointer-value jp doc)
   (unless (json-pointer? jp)
     (error "Not a JSON Pointer." jp))
   (unless (jsexpr? doc)
@@ -164,7 +164,7 @@
                        (error "A JSON object or array is needed." document)))))))))
   (find-value (rest pointer) doc))
 
-(provide pointer-value)
+(provide json-pointer-value)
 
 (module+ test
   (define sample-doc/str #<<SAMPLE
@@ -195,39 +195,39 @@ SAMPLE
                     json-number
                     json-array))
   (check json-equal?
-         (pointer-value "" sample-doc/jsexpr)
+         (json-pointer-value "" sample-doc/jsexpr)
          sample-doc/jsexpr)
   (check json-equal?
-         (pointer-value "/foo" sample-doc/jsexpr)
+         (json-pointer-value "/foo" sample-doc/jsexpr)
          (json-array (json-string "bar")
                      (json-string "baz")))
   (check json-equal?
-         (pointer-value "/foo/0" sample-doc/jsexpr)
+         (json-pointer-value "/foo/0" sample-doc/jsexpr)
          (json-string "bar"))
   (check json-equal?
-         (pointer-value "/" sample-doc/jsexpr)
+         (json-pointer-value "/" sample-doc/jsexpr)
          (json-number 0))
   (check json-equal?
-         (pointer-value "/a~1b" sample-doc/jsexpr)
+         (json-pointer-value "/a~1b" sample-doc/jsexpr)
          (json-number 1))
   (check json-equal?
-         (pointer-value "/c%d" sample-doc/jsexpr)
+         (json-pointer-value "/c%d" sample-doc/jsexpr)
          (json-number 2))
   (check json-equal?
-         (pointer-value "/e^f" sample-doc/jsexpr)
+         (json-pointer-value "/e^f" sample-doc/jsexpr)
          (json-number 3))
   (check json-equal?
-         (pointer-value "/g|h" sample-doc/jsexpr)
+         (json-pointer-value "/g|h" sample-doc/jsexpr)
          (json-number 4))
   (check json-equal?
-         (pointer-value "/i\\j" sample-doc/jsexpr)
+         (json-pointer-value "/i\\j" sample-doc/jsexpr)
          (json-number 5))
   (check json-equal?
-         (pointer-value "/k\"l" sample-doc/jsexpr)
+         (json-pointer-value "/k\"l" sample-doc/jsexpr)
          (json-number 6))
   (check json-equal?
-         (pointer-value "/ " sample-doc/jsexpr)
+         (json-pointer-value "/ " sample-doc/jsexpr)
          (json-number 7))
   (check json-equal?
-         (pointer-value "/m~0n" sample-doc/jsexpr)
+         (json-pointer-value "/m~0n" sample-doc/jsexpr)
          (json-number 8)))
