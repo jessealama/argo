@@ -195,7 +195,7 @@ point       evaluate a JSON Pointer expression")))
          (newline)
          (exit 1))
         (else
-         (display (jsexpr->string reference))
+         (display (json-pretty-print reference))
          (newline)
          (exit 0))))
 
