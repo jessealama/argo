@@ -152,4 +152,7 @@
 ]")
   (let ([obj (hasheq 'some "pig" 'pig 'null)])
     (let ([rendered (json-pretty-print obj)])
-      (check-true (or (string=? rendered "{\n\"some\": \"pig\",\n\"pig\": null\n}") (string=? rendered "{\n\"pig\": null,\n\"some\": \"pig\"\n}")) rendered))))
+      (check-true (or (string=? rendered "{\n\"some\": \"pig\",\n\"pig\": null\n}")
+                      (string=? rendered "{\n\"pig\": null,\n\"some\": \"pig\"\n}")) rendered)))
+  (check-equal? (json-pretty-print (list 5 (list #t) 'null))
+                "[\n  5,\n  [\n    true\n  ],\n  null\n]"))
