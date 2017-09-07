@@ -52,6 +52,12 @@ string?]
 Returns a string representation of @tt{data} that is, well, pretty.
 
 @defproc[
+(json-in-one-line
+[data jsexpr?])
+string?]
+Returns a string representation of @tt{data} that has a single line. (It's kind of the opposite of @tt{json-pretty-print}.)
+
+@defproc[
 (json-pointer-value
 [data jsexpr?]
 [expr string?])
