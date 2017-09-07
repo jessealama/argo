@@ -65,6 +65,7 @@ schema      check whether a JSON file is a schema
 equal       check whether two JSON files are equal
 point       evaluate a JSON Pointer expression
 pp          pretty-print JSON
+oneline     compress JSON into a single line
 support     how to support Argo development")))
 
 (define (handle-validate)
