@@ -15,10 +15,13 @@
                   json-pointer-value))
 (require (only-in (file "pp.rkt")
                   json-pretty-print))
+(require (only-in (file "oneline.rkt")
+                  json-in-one-line))
 
 (provide adheres-to-schema?
          json-schema?
          check-json/schema
          json-equal?
          json-pretty-print
+         json-in-one-line
          json-pointer-value)
