@@ -17,9 +17,9 @@ You will see either @tt{Validation succeeded} or @tt{Validation failed}.
 
 In case of validation success, seeing ``Validation succeeded'' is probably enough. In case of failure, ``Validation failed'' is, admittedly, not the most informative thing you've seen today. See also @secref{error-reporting}.
 
-@section[#:tag "validate-exit-code"]{Exit code}
+@bold{Exit code}
 
-@tt{validate} exits cleanly (with code 0) provided:
+The @tt{validate} command exits cleanly (with code 0) provided:
 
 @itemlist[
   @item{exactly two arguments, @tt{schema.json} and @tt{data.json}, were supplied to it,}
@@ -33,15 +33,15 @@ In case of validation success, seeing ``Validation succeeded'' is probably enoug
 
 If any of these conditions fails, the exit code will be 1.
 
-@section{Options}
+@bold{Options}
 
-The command accepts only one option, @tt{quiet}, which, if set, will cause all output to be suppressed. By default, this option is unset. In such a case, the exit code will be your only indication about the validity of your data. Here's how you can use this option:
+@tt{validate} accepts only one option, @tt{quiet}, which, if set, will cause all output to be suppressed. By default, this option is unset. In such a case, the exit code will be your only indication about the validity of your data. Here's how you can use this option:
 
 @verbatim{
 raco argo validate --quiet schema.json data.json
 }
 
-As discussed in the @secref{validate-exit-code}, there are seven conditions that need to be met for @tt{validate} to exit cleanly. Looking at that list there, another way to think of it is that there are six preconditions that need to be met for validation to even make sense. Even if the @tt{quiet} flag is set, you will see error output if any of these preconditions is not met. Thus
+As discussed in the above concerning exit codes, there are seven conditions that need to be met for @tt{validate} to exit cleanly. Looking at that list there, another way to think of it is that there are six preconditions that need to be met for validation to even make sense. Even if the @tt{quiet} flag is set, you will see error output if any of these preconditions is not met. Thus
 
 @verbatim{
 raco argo validate --quiet schema.json

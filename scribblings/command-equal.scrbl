@@ -17,7 +17,7 @@ Depending on whether the contents of @tt{json-1.json} and @tt{json-2.json} are t
 
 See the documentation for @racket[json-equal?] to see the definition of what it means for two JSON documents to be equal.
 
-@section[#:tag "equal-exit-code"]{Exit code}
+@bold{Exit code}
 
 @tt{equal} with arguments exits cleanly (with code 0) provided:
 
@@ -33,6 +33,6 @@ If any of these conditions fails, the exit code will be 1.
 
 If the @tt{quiet} flag is used, the exit code will be 1 if the two inputs are represent different JSON documents. If the @tt{quiet} flag is not used, the exit code will always be 0 (provided, of course, that all of the above conditions are met).
 
-@section{Options}
+@bold{Options}
 
 @tt{equal} accepts only one option, @tt{quiet}, which, if set, will cause all output to be suppressed. By default, this option is unset. In such a case, the exit code will be your only indication about the equality of your data.

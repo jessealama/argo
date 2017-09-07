@@ -15,7 +15,7 @@ raco argo schema schema.json
 
 The output will tell you whether @tt{schema.json} really is a JSON Schema.
 
-@section[#:tag "schema-exit-code"]{Exit code}
+@bold{Exit code}
 
 @tt{schema} exits cleanly (with code 0) provided:
 
@@ -27,6 +27,6 @@ The output will tell you whether @tt{schema.json} really is a JSON Schema.
 
 (Though see below for a way in which the exit code may be non-zero even if all these conditions are met.)
 
-@section{Options}
+@bold{Options}
 
 @tt{schema} accepts only one option, @tt{quiet}, which, if set, will cause all output to be suppressed. By default, this option is unset. In such a case, the exit code will be your only indication about whether your JSON really is a schema.

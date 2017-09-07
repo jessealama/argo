@@ -13,7 +13,7 @@ Run it like this:
 raco argo pp data.json
 }
 
-@section[#:tag "pp-exit-code"]{Exit code}
+@bold{Exit code}
 
 @tt{pp} exits cleanly (with code 0) provided:
 
@@ -25,6 +25,6 @@ raco argo pp data.json
 
 If any of these conditions fails, the exit code will be 1.
 
-@section{Options}
+@bold{Options}
 
 The command accepts no options.

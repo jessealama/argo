@@ -13,7 +13,7 @@ Run it like this:
 raco argo point data.json expression
 }
 
-@section[#:tag "point-exit-code"]{Exit code}
+@bold{Exit code}
 
 @tt{point} exits cleanly (with code 0) provided:
 
@@ -27,6 +27,6 @@ raco argo point data.json expression
 
 If any of these conditions fails, the exit code will be 1.
 
-@section{Options}
+@bold{Options}
 
 @tt{point} accepts no options.
