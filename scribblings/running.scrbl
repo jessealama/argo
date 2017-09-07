@@ -13,6 +13,8 @@ Argo can be executed as a command-line tool using @tt{raco}. This section discus
 
 @include-section["command-pp.scrbl"]
 
+@include-section["command-oneline.scrbl"]
+
 @include-section["command-point.scrbl"]
 
 @include-section["command-equal.scrbl"]
