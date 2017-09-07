@@ -21,6 +21,8 @@
                   json-pointer-value))
 (require (only-in (file "pp.rkt")
                   json-pretty-print))
+(require (only-in (file "oneline.rkt")
+                  json-in-one-line))
 (require (only-in racket/cmdline
                   command-line))
 (require (only-in racket/vector
@@ -44,6 +46,7 @@
     [("validate") (handle-validate)]
     [("schema") (handle-schema)]
     [("pp") (handle-pretty-print)]
+    [("oneline") (handle-oneline)]
     [("equal") (handle-equal)]
     [("point") (handle-point)]
     [("support") (handle-support)]
@@ -217,6 +220,24 @@ support     how to support Argo development")))
     (complain-and-die (format "\"~a\" is malformed JSON."
                               json-path)))
   (display (json-pretty-print jsexpr))
+  (newline)
+  (exit 0))
+
+(define (handle-oneline)
+  (define-values (json-path)
+    (command-line
+     #:program "raco argo oneline"
+     #:argv (vector-drop (current-command-line-arguments) 1) ;; drop "oneline" from the command
+     #:args (json-path)
+     (values json-path)))
+  (unless (file-exists? json-path)
+    (complain-and-die (format "\"~a\" does not exist." json-path)))
+  (define-values (jsexpr js-well-formed?)
+    (parse-json-file json-path))
+  (unless js-well-formed?
+    (complain-and-die (format "\"~a\" is malformed JSON."
+                              json-path)))
+  (display (json-in-one-line jsexpr))
   (newline)
   (exit 0))
 
