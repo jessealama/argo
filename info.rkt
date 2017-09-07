@@ -26,6 +26,6 @@
 
 (define raco-commands
   '(("argo"
-     (submod (file "command.rkt") raco)
+     (submod argo/command raco)
      "work with JSON Schema"
      #f)))
