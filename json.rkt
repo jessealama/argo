@@ -225,27 +225,40 @@
                       (json-equal? (remove-property jsobj1 prop1)
                                    (remove-property jsobj2 prop1)))))))))
 
-;; assumes that both arguments as jsexpr? values
-(define (json-equal? js1 js2)
+(define (same-json-type? js1 js2)
   (cond ((json-null? js1)
          (json-null? js2))
         ((json-string? js1)
-         (and (json-string? js2)
-              (string=? js1 js2)))
+         (json-string? js2))
         ((json-number? js1)
-         (and (json-number? js2)
-              (= js1 js2)))
+         (json-number? js2))
         ((json-boolean? js1)
-         (and (json-boolean? js2)
-              (eq? js1 js2)))
+         (json-boolean? js2))
         ((json-array? js1)
-         (and (json-array? js2)
-              (json-equal-arrays? js1 js2)))
+         (json-array? js2))
         ((json-object? js1)
-         (and (json-object? js2)
-              (json-equal-objects? js1 js2)))
+         (json-object? js2))
         (else
          (error "Unknown type: Don't know how to deal with ~a." js1))))
+
+(provide same-json-type?)
+
+;; assumes that both arguments as jsexpr? values
+(define (json-equal? js1 js2)
+  (cond ((not (same-json-type? js1 js2))
+         #f)
+        ((json-null? js1)
+         (json-null? js2))
+        ((json-string? js1)
+         (string=? js1 js2))
+        ((json-number? js1)
+         (= js1 js2))
+        ((json-boolean? js1)
+         (eq? js1 js2))
+        ((json-array? js1)
+         (json-equal-arrays? js1 js2))
+        ((json-object? js1)
+         (json-equal-objects? js1 js2))))
 
 (provide json-equal?)
 
@@ -319,6 +332,27 @@
 
 (provide count-properties)
 
+(define (set-property obj prop val)
+  (unless (json-object? obj)
+    (error "Not a JSON object:" obj))
+  (unless (symbol? prop)
+    (error "Property not a symbol:" prop))
+  (unless (jsexpr? val)
+    (error "Value not a jsexpr:" val))
+  (hash-set obj prop val))
+
+(module+ test
+  (let ([before (hasheq 'color "grue")])
+    (let-test ([after (set-property 'color "true")])
+      (check-true (jsexpr? after))
+      (check-true (has-property? after 'color))
+      (check-true (json-string? (object-property after 'color)))
+      (check-equals? "true" (object-property after 'color))))
+  (check-exn exn:fail?
+             (lambda () (set-property (hasheq 'foo "buzz")
+                                      "foo"  ;; non-symbol!
+                                      "bar"))))
+
 (define (has-type? data type)
   (unless (string? type)
     (error "Type should be a string: " type))
@@ -340,6 +374,52 @@
          (error "Unknown JSON data type: " type))))
 
 (provide has-type?)
+
+(define (json-isomorphic? js1 js2)
+  (cond ((json-array? js1)
+         (and (json-array? js2)
+              (= (array-length js1)
+                 (array-length js2))
+              (andmap json-isomorphic?
+                      (array-items js1)
+                      (array-items js2))))
+        ((json-object? js1)
+         (and (json-object? js2)
+              (andmap (lambda (prop)
+                        (has-property? js1 prop))
+                      (object-properties js2))
+              (andmap (lambda (prop)
+                        (has-property? js2 prop))
+                      (object-properties js1))
+              (andmap (lambda (prop)
+                        (json-isomorphic? (property-value js1 prop)
+                                     (property-value js2 prop)))
+                      (object-properties js1))))
+        (else
+         (same-json-type? js1 js2))))
+
+(module+ test
+  (check-true (json-isomorphic? #t #t))
+  (check-true (json-isomorphic? #t #f))
+  (check-false (json-isomorphic? #t 1))
+  (check-false (json-isomorphic? (list 1) 1))
+  (check-true (json-isomorphic? (list #t) (list #f)))
+  (check-true (json-isomorphic? 1.0 1))
+  (check-true (json-isomorphic? 1.5 -1.8))
+  (check-true (json-isomorphic? (list (list #f)) (list (list #t))))
+  (check-false (json-isomorphic? (list #f) (list (list #f))))
+  (check-true (json-isomorphic? (hasheq 'hey "there")
+                                (hasheq 'hey "here")))
+  (check-false (json-isomorphic? (hasheq) (hasheq 'whatever "grunt")))
+  (check-true (json-isomorphic? (hasheq 'wow 'null 'how #t)
+                                (hasheq 'how #f 'wow 'null)))
+  (check-false (json-isomorphic? (hasheq 'wow "cow" 'moo "foo")
+                                 (hasheq 'wow "cow")))
+  ;; array length does not matter, as long as the elements are isomorphic
+  (check-true (json-isomorphic? (list #t)
+                                (list #t #f)))
+  (check-true (json-isomorphic? (hasheq 'a "b" 'c (hasheq 'no  "way"))
+                                (hasheq 'a "c" 'c (hasheq 'no "dude")))))
 
 ;; Command line application for testing whether a file is
 ;; a JSON file at all
