@@ -10,7 +10,7 @@
 (values jsexpr? boolean?)]
 Parse something that might be JSON (a path to a file, a byte string, a string, an input port, or a URL).
 
-Returns two values. The first a @racket[jsexpr?] representing the parsed content of @tt[jsonish]. The second indicates whether the result could be parsed as JSON at all. @racket[#f] means that the argument represents invalid JSON; in that case, it doesn't matter what the first return value is.
+Returns two values. The first a @racket[jsexpr?] representing the parsed content of @tt{jsonish}. The second indicates whether the result could be parsed as JSON at all. @racket[#f] means that the argument represents invalid JSON; in that case, it doesn't matter what the first return value is.
 
 @defproc[
 (json-schema?
