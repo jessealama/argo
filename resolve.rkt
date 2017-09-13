@@ -5,7 +5,11 @@
 
 (require json)
 
-(require http/request)
+(require (only-in (file "parse.rkt")
+                    parse-json-string
+                    parse-json-url))
+
+;; (require http/request)
 
 (require (only-in (file "parameters.rkt")
                   original-schema
@@ -80,21 +84,21 @@
                          (struct-copy url
                                       ref
                                       [fragment #f]))
-                       (define url-w/o-fragment/str (url->string url-w/o-fragment))
-                       (define-values (path header)
-                         (uri&headers->path&header url-w/o-fragment/str (list)))
-                       (define-values (in out)
-                         (connect-uri url-w/o-fragment/str))
-                       (define ok? (start-request in
-                                                  out
-                                                  "1.1"
-                                                  "GET"
-                                                  path
-                                                  header))
-                       (define h (purify-port/log-debug in))
-                       (define schema/bytes (read-entity/bytes in h))
+                       ;; (define url-w/o-fragment/str (url->string url-w/o-fragment))
+                       ;; (define-values (path header)
+                       ;;   (uri&headers->path&header url-w/o-fragment/str (list)))
+                       ;; (define-values (in out)
+                       ;;   (connect-uri url-w/o-fragment/str))
+                       ;; (define ok? (start-request in
+                       ;;                            out
+                       ;;                            "1.1"
+                       ;;                            "GET"
+                       ;;                            path
+                       ;;                            header))
+                       ; (define h (purify-port/log-debug in))
+                       ; (define schema/bytes (read-entity/bytes in h))
                        (define-values (schema well-formed?)
-                         (parse-json-bytes schema/bytes))
+                         (parse-json-url url-w/o-fragment))
                        (cond ((not well-formed?)
                               (values #f #f))
                              ((string? fragment)
