@@ -126,8 +126,6 @@ SCHEMA
   ))
 
 (module+ test
-  (require (only-in (file "parse.rkt")
-                    parse-json-string))
   (require (only-in (file "json.rkt")
                     json-equal?))
   (define-values (geo/jsexp geo-ok?)
