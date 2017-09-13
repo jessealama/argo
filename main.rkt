@@ -17,6 +17,8 @@
                   json-pretty-print))
 (require (only-in (file "oneline.rkt")
                   json-in-one-line))
+(require (only-in (file "parse.rkt")
+                  parse-json))
 
 (provide adheres-to-schema?
          json-schema?
@@ -24,4 +26,5 @@
          json-equal?
          json-pretty-print
          json-in-one-line
-         json-pointer-value)
+         json-pointer-value
+         parse-json)
