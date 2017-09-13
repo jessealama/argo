@@ -13,9 +13,6 @@
                   original-schema
                   current-id))
 
-(require (only-in (file "parse.rkt")
-                  parse-json-bytes))
-
 (require net/url-structs)
 
 (require (only-in net/url
