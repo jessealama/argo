@@ -113,10 +113,14 @@ SCHEMA
   (define-values (geo/jsexp geo-ok?)
     (parse-json-string geo/str))
   (check-true geo-ok?)
-  (define-values (resolved-geo resolved-ok?)
-    (resolve-schema-wrt-id "http://json-schema.org/geo" #f (hasheq)))
-  (check-true resolved-ok?)
-  (check-true (json-equal? resolved-geo geo/jsexp))
+
+  ;; commented out because testing these requires making
+  ;; an HTTP connection to json-schema.org:
+  ;;
+  ;; (define-values (resolved-geo resolved-ok?)
+  ;;   (resolve-schema-wrt-id "http://json-schema.org/geo" #f (hasheq)))
+  ;; (check-true resolved-ok?)
+  ;; (check-true (json-equal? resolved-geo geo/jsexp))
   )
 
 (module+ test
