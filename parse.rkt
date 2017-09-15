@@ -84,6 +84,8 @@
          #t)
         ((url? x)
          #t)
+        ((jsexpr? x)
+         #t)
         (else
          #f)))
 
@@ -100,6 +102,8 @@
          (parse-json-port js))
         ((url? js)
          (parse-json-url js))
+        ((jsexpr? js)
+         (values js #t))
         (else
          (error "Cannot parse as JSON:" js))))
 
