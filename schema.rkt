@@ -35,7 +35,7 @@
          (only-in racket/cmdline
                   command-line)
          (only-in (file "parse.rkt")
-                  parse-json-string)
+                  parse-json)
          (only-in (file "format.rkt")
                   uri-reference?
                   json-pointer?))
@@ -329,12 +329,14 @@
     (check-not-false (member keyword keywords))))
 
 (define (json-schema? thing)
-  (cond ((not (jsexpr? thing))
+  (define-values (thing/jsexpr well-formed?)
+    (parse-json thing))
+  (cond ((not well-formed?)
          #f)
-        ((json-boolean? thing)
+        ((json-boolean? thing/jsexpr)
          #t)
-        ((json-object? thing)
-         (let* ([properties (object-properties thing)]
+        ((json-object? thing/jsexpr)
+         (let* ([properties (object-properties thing/jsexpr)]
                 [checkable (intersection properties
                                          json-schema-keywords)])
            (andmap (lambda (keyword)
@@ -423,13 +425,8 @@
      schema-path))
   (unless (file-exists? schema-path)
     (complain-and-die (format "Schema file \"~a\" does not exist." schema-path)))
-  (define (parse-fail err) #f)
-  (define schema/bytes (file-content/bytes schema-path))
-  (define schema/string (bytes->string schema/bytes))
-  (when (eq? schema/string #f)
-    (complain-and-die (format "Contents of schema at \"~a\" cannot be interpreted as a UTF-8 string." schema-path)))
   (define-values (schema/jsexpr schema-well-formed?)
-    (parse-json-string schema/string))
+    (parse-json schema-path))
   (unless schema-well-formed?
     (complain-and-die (format "Schema at \"~a\" is not well-formed JSON." schema-path)))
   (exit (if (json-schema? schema/jsexpr)
