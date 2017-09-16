@@ -339,11 +339,6 @@
                   #t)))
           (else
            #f)))
-  (define-values (data/jsexpr data-well-formed?)
-    (parse-json data))
-  (define-values (schema/jsexpr schema-well-formed?)
-    (parse-json schema))
-  (log-error (format "data? ~a schema? ~a" data-well-formed? schema-well-formed?))
   (and (jsexpr? data)
        (jsexpr? schema)
        (json-schema? schema)
