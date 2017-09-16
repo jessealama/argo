@@ -375,6 +375,6 @@
              [schema #t])
      (check-true (jsexpr? js))
      (check-true (json-schema? schema))
-     (check-eq? void (check-json/schema "right about now" #t))))
+     (check-eq? void (check-json/schema js schema))))
 
 (provide check-json/schema)
