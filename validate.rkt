@@ -66,8 +66,8 @@
 
 (define (adheres-to-schema? data schema)
   (define original-schema schema)
-  (log-error (format "original data = ~a" data))
-  (log-error (format "original schema = ~a" schema))
+  ;; (log-error (format "original data = ~a" data))
+  ;; (log-error (format "original schema = ~a" schema))
   (define (valid? data schema)
     (define (has? property)
       (has-property? schema property))
@@ -347,26 +347,21 @@
 (provide adheres-to-schema?)
 
 (define (check-json/schema data schema)
-  (log-error (format "data = ~a and schema = ~a" data schema))
   (cond ((not (jsexpr? data))
-         (log-error "1")
          (let-values ([(data/jsexpr data-well-formed?)
                        (parse-json data)])
            (if data-well-formed?
                (check-json/schema data/jsexpr schema)
                (raise-argument-error 'data "well-formed" data))))
         ((not (jsexpr? schema))
-         (log-error "2")
          (let-values ([(schema/jsexpr schema-well-formed?)
                        (parse-json schema)])
            (if schema-well-formed?
                (check-json/schema data schema/jsexpr)
                (raise-argument-error 'schema "well-formed" schema))))
         ((not (json-schema? schema))
-         (log-error "3")
          (raise-argument-error 'schema "JSON Schema" schema))
         ((not (adheres-to-schema? data schema))
-         (log-error "4")
          (error "Data does not adhere to schema."))
         (else
          void)))
