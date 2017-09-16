@@ -1,4 +1,6 @@
-#lang racket/base
+#lang racket
+
+(require br/define)
 
 (require (only-in racket/list
                   remove-duplicates
@@ -243,3 +245,15 @@
 (module+ test
   (let ([empty-url (url #f #f #f #f #f (list) (list) #f)])
     (check-true (urls-equal? empty-url empty-url))))
+
+;; test utilities
+
+(require (only-in rackunit
+                  test-begin))
+
+(define-macro (let-test BINDINGS EXPR ...)
+  #'(let BINDINGS (test-begin EXPR ...)))
+(define-macro (let*-test BINDINGS EXPR ...)
+  #'(let* BINDINGS (test-begin EXPR ...)))
+
+(provide let-test let*-test)

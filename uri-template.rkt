@@ -2,13 +2,9 @@
 
 (module+ test
   (require rackunit)
-  (require br/define)
   (require (only-in (file "util.rkt")
-                    urls-equal?))
-  (define-macro (let-test BINDINGS EXPR ...)
-    #'(let BINDINGS (test-begin EXPR ...)))
-  (define-macro (let*-test BINDINGS EXPR ...)
-    #'(let* BINDINGS (test-begin EXPR ...))))
+                    urls-equal?
+                    let-test)))
 
 (require net/url-structs)
 (require br-parser-tools/lex)
