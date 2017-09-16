@@ -329,14 +329,12 @@
     (check-not-false (member keyword keywords))))
 
 (define (json-schema? thing)
-  (define-values (thing/jsexpr well-formed?)
-    (parse-json thing))
-  (cond ((not well-formed?)
+  (cond ((not (jsexpr? thing))
          #f)
-        ((json-boolean? thing/jsexpr)
+        ((json-boolean? thing)
          #t)
-        ((json-object? thing/jsexpr)
-         (let* ([properties (object-properties thing/jsexpr)]
+        ((json-object? thing)
+         (let* ([properties (object-properties thing)]
                 [checkable (intersection properties
                                          json-schema-keywords)])
            (andmap (lambda (keyword)
