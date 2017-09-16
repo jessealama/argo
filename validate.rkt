@@ -3,7 +3,9 @@
 (require json)
 
 (module+ test
-  (require rackunit))
+  (require rackunit)
+  (require (only-in (file "util.rkt")
+                    let-test)))
 
 (require (only-in (file "resolve.rkt")
                   resolve-schema-wrt-id))
@@ -12,7 +14,7 @@
                   current-id))
 
 (require (only-in (file "parse.rkt")
-                  parse-json-bytes))
+                  parse-json))
 
 (require (only-in http/request
                   uri&headers->path&header
@@ -64,8 +66,8 @@
 
 (define (adheres-to-schema? data schema)
   (define original-schema schema)
-  ;; (log-error (format "original data = ~a" data))
-  ;; (log-error (format "original schema = ~a" schema))
+  (log-error (format "original data = ~a" data))
+  (log-error (format "original schema = ~a" schema))
   (define (valid? data schema)
     (define (has? property)
       (has-property? schema property))
@@ -337,29 +339,52 @@
                   #t)))
           (else
            #f)))
+  (define-values (data/jsexpr data-well-formed?)
+    (parse-json data))
+  (define-values (schema/jsexpr schema-well-formed?)
+    (parse-json schema))
+  (log-error (format "data? ~a schema? ~a" data-well-formed? schema-well-formed?))
   (and (jsexpr? data)
+       (jsexpr? schema)
        (json-schema? schema)
        (valid? data schema)))
 
 (provide adheres-to-schema?)
 
 (define (check-json/schema data schema)
+  (log-error (format "data = ~a and schema = ~a" data schema))
   (cond ((not (jsexpr? data))
-         (raise-argument-error 'data "jsexpr?" data))
+         (log-error "1")
+         (let-values ([(data/jsexpr data-well-formed?)
+                       (parse-json data)])
+           (if data-well-formed?
+               (check-json/schema data/jsexpr schema)
+               (raise-argument-error 'data "well-formed" data))))
         ((not (jsexpr? schema))
-         (raise-argument-error 'schema "jsexpr?" schema))
+         (log-error "2")
+         (let-values ([(schema/jsexpr schema-well-formed?)
+                       (parse-json schema)])
+           (if schema-well-formed?
+               (check-json/schema data schema/jsexpr)
+               (raise-argument-error 'schema "well-formed" schema))))
         ((not (json-schema? schema))
+         (log-error "3")
          (raise-argument-error 'schema "JSON Schema" schema))
         ((not (adheres-to-schema? data schema))
+         (log-error "4")
          (error "Data does not adhere to schema."))
         (else
          void)))
 
 (module+ test
-  (check-exn exn:fail:contract? (lambda () (check-json/schema 'no-way (hasheq))))
-  (check-exn exn:fail:contract? (lambda () (check-json/schema "frothy" 'jose)))
-  (check-exn exn:fail:contract? (lambda () (check-json/schema 5 5)))
-  (check-exn exn:fail? (lambda () (check-json/schema 0 #f)))
-  (check-eq? void (check-json/schema "right about now" #t)))
+  ;; (check-exn exn:fail:contract? (lambda () (check-json/schema 'no-way (hasheq))))
+  ;; (check-exn exn:fail:contract? (lambda () (check-json/schema "frothy" 'jose)))
+  ;; (check-exn exn:fail:contract? (lambda () (check-json/schema 5 5)))
+  ;; (check-exn exn:fail? (lambda () (check-json/schema 0 #f)))
+  (let-test ([js "right about now"]
+             [schema #t])
+     (check-true (jsexpr? js))
+     (check-true (json-schema? schema))
+     (check-eq? void (check-json/schema "right about now" #t))))
 
 (provide check-json/schema)
