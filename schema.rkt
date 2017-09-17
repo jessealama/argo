@@ -403,7 +403,7 @@
      'items (hasheq
              'foo (hasheq
                    'type "integer"))
-     'additional-items #t))
+     'additionalItems #t))
   (test-case
       "Simple check"
     (check-true (jsexpr? schema-1/jsexper))
