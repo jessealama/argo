@@ -424,7 +424,7 @@
   (unless (file-exists? schema-path)
     (complain-and-die (format "Schema file \"~a\" does not exist." schema-path)))
   (define-values (schema/jsexpr schema-well-formed?)
-    (parse-json schema-path))
+    (parse-json (string->path schema-path)))
   (unless schema-well-formed?
     (complain-and-die (format "Schema at \"~a\" is not well-formed JSON." schema-path)))
   (exit (if (json-schema? schema/jsexpr)
