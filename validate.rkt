@@ -266,7 +266,7 @@
                                 (valid-w/o? 'patternProperties)))
                           (else
                            (valid-w/o? 'patternProperties)))))
-                 ;; additionalProperties
+                 ;; dependencies
                  ((has? 'dependencies)
                   (let ([deps (get 'dependencies)])
                     (define (satisfies-dependency? prop dependency)
