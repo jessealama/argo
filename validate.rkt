@@ -166,6 +166,24 @@
                       ;; TODO not done yet
                       #t
                       (valid-w/o? 'additionalItems)))
+                 ((has? 'additionalProperties)
+                  (if (json-object? data)
+                      (let ([schema-for-additional (get 'additionalProperties)]
+                            [schema-properties (if (json-object? schema)
+                                                   (if (has? 'properties)
+                                                       (object-properties (get 'properties))
+                                                       (list))
+                                                   (list))])
+                        (let ([more-properties (filter (lambda (prop)
+                                                         (not (member prop
+                                                                      schema-properties)))
+                                                       (object-properties data))])
+                          (and (andmap (lambda (prop)
+                                         (adheres-to-schema? (object-property data prop)
+                                                             schema-for-additional))
+                                       more-properties)
+                               (valid-w/o? 'additionalProperties))))
+                      (valid-w/o? 'additionalProperties)))
                  ((has? 'maxItems)
                   (if (json-array? data)
                       (if (<= (array-length data) (get 'maxItems))
