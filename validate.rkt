@@ -179,7 +179,7 @@
                                                                       schema-properties)))
                                                        (object-properties data))])
                           (and (andmap (lambda (prop)
-                                         (adheres-to-schema? (object-property data prop)
+                                         (adheres-to-schema? (property-value data prop)
                                                              schema-for-additional))
                                        more-properties)
                                (valid-w/o? 'additionalProperties))))
