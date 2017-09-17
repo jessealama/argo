@@ -234,7 +234,7 @@
                       (let ([required (get 'required)])
                         (and (andmap (lambda (prop)
                                        (has-property? data prop))
-                                     (array-items (get 'required)))
+                                     (array-items required))
                              (valid-w/o? 'required)))
                       (valid-w/o? 'required)))
                  ((has? 'properties)
