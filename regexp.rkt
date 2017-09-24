@@ -45,4 +45,5 @@
     (check-true (ecma-262-regexp-matches? dev-regexp "/dev/sda1")))
 
   (check-true (ecma-262-regexp-matches? "foo" "foo"))
-  (check-true (ecma-262-regexp-matches? "foo" "afool")))
+  (check-true (ecma-262-regexp-matches? "foo" "afool"))
+  (check-false (ecma-262-regexp-matches? "[^,]+" "dear sir,")))
