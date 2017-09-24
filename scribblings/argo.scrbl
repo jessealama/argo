@@ -1,7 +1,8 @@
 #lang scribble/manual
 
 @require[@for-label[racket/base
-		    json]]
+		    json
+		    argo]]
 
 @title[#:style "toc"]{Argo: JSON Schema Adventures}
 @author[(author+email "Jesse Alama" "jesse@lisp.sh")]

@@ -1,6 +1,6 @@
 #lang scribble/manual
 
-@require[@for-label[racket/base json]]
+@require[@for-label[racket/base json argo]]
 
 @title{Library interface}
 
