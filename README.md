@@ -7,4 +7,6 @@ The main function is `adheres-to-schema?`. It takes two arguments, both supposed
 
 Argo adheres to version 6 of [JSON Schema](http://json-schema.org). This version is fairly new (released 2017-04-15); a lot of the JSON Schemas out there on the internet are version 4.
 
-Bug reports and feature requests are welcome; reach me at [`jesse@lisp.sh`](mailto:jesse@lisp.sh).
+Bug reports and feature requests are welcome. You're welcome to use [GitHub issues](https://github.com/jessealama/argo/issues) or reach me by mail at [`jesse@lisp.sh`](mailto:jesse@lisp.sh).
+
+To support continued development, you're welcome to [make a donation](https://gum.co/argojson).
