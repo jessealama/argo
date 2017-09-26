@@ -2,7 +2,7 @@
 
 (define collection "argo")
 
-(define version "0.9.3")
+(define version "0.9.4")
 
 (define deps
   '("base"
