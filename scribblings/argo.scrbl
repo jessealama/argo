@@ -9,9 +9,7 @@
 
 @defmodule[argo]
 
-Argo is a JSON Schema validator. Work with your JSON data knowing that it adheres to some sensible constraints. If you have to work with JSON, even if only occasionally, you may want to consider validating it (that is, checking that is satisfies
-
-Argo is a library that exports only one function: @racket[adheres-to-schema?]. That function takes a JSON Schema and a JSON document and returns a boolean value. @racket[#t] means that the document adheres to the schema; @racket[#f] means it does not.
+Argo is a JSON Schema validator. Work with your JSON data knowing that it adheres to some sensible constraints. If you have to work with JSON, even if only occasionally, you may want to consider validating it (that is, checking that is satisfies the constraints specified by the schema).
 
 @include-section["installation.scrbl"]
 
