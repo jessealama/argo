@@ -2,7 +2,7 @@
 
 (define collection "argo")
 
-(define version "0.9.4")
+(define version "0.9.5")
 
 (define deps
   '("base"
@@ -10,6 +10,7 @@
     "http"
     "brag"
     "sugar"
+    "beautiful-racket-lib"
     "br-parser-tools-lib"))
 
 (define build-deps
