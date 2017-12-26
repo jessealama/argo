@@ -2,12 +2,13 @@
 
 (require json)
 (require racket/port)
-(require (only-in (file "util.rkt")
-                  bytes->string))
 (require http/request)
 (require (only-in net/url-string
                   url->string))
 (require net/url-structs)
+(require web-server/http/response-structs)
+(require (only-in racket/list
+                  empty))
 
 (module+ test
   (require rackunit))
@@ -23,11 +24,11 @@
 
 (provide parse-json-port)
 
+;; string? -> jsexpr? boolean?
 (define (parse-json-string str)
-  (let ([p (open-input-string str)])
-    (begin0
-        (parse-json-port p)
-      (close-input-port p))))
+  (define (parse-fail err) (values #f #f))
+  (with-handlers ([exn:fail:read? parse-fail])
+    (values (string->jsexpr str) #t)))
 
 (module+ test
   (let ([js "x"])
@@ -39,11 +40,11 @@
 
 (provide parse-json-string)
 
+;; bytes? -> jsexpr? boolean?
 (define (parse-json-bytes bstr)
-  (let ([str (bytes->string bstr)])
-    (if (string? str)
-        (parse-json-string str)
-        (values #f #f))))
+  (define (parse-fail err) (values #f #f))
+  (with-handlers ([exn:fail:read? parse-fail])
+    (values (bytes->jsexpr bstr) #t)))
 
 (provide parse-json-bytes)
 
@@ -73,19 +74,29 @@
 
 (provide parse-json-url)
 
+(define (parse-json-response r)
+  (parse-json-bytes (call-with-output-bytes (response-output r))))
+
+(module+ test
+  (let ([r (response 301
+                     #"OK"
+                     (current-seconds)
+                     #"text/html;charset=utf-8"
+                     empty
+                     (lambda (op) (write-bytes #"true" op)))])
+    (let-values ([(js ok?) (parse-json-response r)])
+      (check-true (jsexpr? js))
+      (check-true ok?)
+      (check-true js))))
+
 (define (can-parse? x)
-  (cond ((path? x)
-         (file-exists? x))
-        ((bytes? x)
-         #t)
-        ((string? x)
-         #t)
-        ((input-port? x)
-         #t)
-        ((url? x)
-         #t)
-        (else
-         #f)))
+  (or (and (path? x)
+           (file-exists? x))
+      (bytes? x)
+      (string? x)
+      (input-port? x)
+      (url? x)
+      (response? x)))
 
 (define (parse-json js)
   (cond ((not (can-parse? js))
