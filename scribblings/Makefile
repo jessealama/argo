@@ -13,6 +13,7 @@ view: argo.html
 	scribble $<
 
 clean:
+	rm -Rf compiled
 	find . -mindepth 1 -maxdepth 1 -type f -name '*~' -delete
 	find . -mindepth 1 -maxdepth 1 -type f -name '*.html' -delete
 	find . -mindepth 1 -maxdepth 1 -type d ! -name '.git' ! -name 'compiled' -exec basename {} ';' | parallel --jobs=1 $(MAKE) --directory="{}" --stop --jobs=1 clean
