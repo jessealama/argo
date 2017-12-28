@@ -2,16 +2,13 @@
 
 (define collection "argo")
 
-(define version "0.9.5")
+(define version "1.0.0")
 
 (define deps
   '("base"
     "rackunit-lib"
     "http"
-    "brag"
-    "sugar"
-    "beautiful-racket-lib"
-    "br-parser-tools-lib"))
+    "json-pointer"))
 
 (define build-deps
   '("scribble-lib"

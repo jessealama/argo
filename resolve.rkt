@@ -22,7 +22,7 @@
 (require (only-in net/url-string
                   url->string))
 
-(require (only-in (file "pointer.rkt")
+(require (only-in json-pointer
                   json-pointer?
                   json-pointer-value))
 

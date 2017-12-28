@@ -16,7 +16,7 @@
                   json-equal?))
 (require (only-in (file "validate.rkt")
                   adheres-to-schema?))
-(require (only-in (file "pointer.rkt")
+(require (only-in json-pointer
                   json-pointer?
                   json-pointer-value))
 (require (only-in (file "pp.rkt")

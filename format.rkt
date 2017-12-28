@@ -207,7 +207,7 @@
 
 (provide uri-template?)
 
-(require (only-in (file "pointer.rkt")
+(require (only-in json-pointer
                   json-pointer?))
 
 (provide json-pointer?)
