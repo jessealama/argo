@@ -8,6 +8,10 @@
   '("base"
     "rackunit-lib"
     "http"
+    "brag"
+    "sugar"
+    "beautiful-racket-lib"
+    "br-parser-tools-lib"
     "json-pointer"))
 
 (define build-deps
