@@ -10,7 +10,8 @@
     "http"
     "sugar"
     "beautiful-racket-lib"
-    "json-pointer"))
+    "json-pointer"
+    "uri-template"))
 
 (define build-deps
   '("scribble-lib"
