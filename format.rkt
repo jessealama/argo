@@ -1,5 +1,15 @@
 #lang racket/base
 
+(provide date-time?
+         email?
+         hostname?
+         ipv4?
+         ipv6?
+         uri?
+         uri-reference?
+         uri-template?
+         json-pointer?)
+
 (module+ test
   (require rackunit))
 
@@ -124,8 +134,6 @@
   (check-false (date-time? "2016-02-30T23:59:60Z"))
   (check-true (date-time? "2016-02-29T23:59:60Z")))
 
-(provide date-time?)
-
 ;; https://tools.ietf.org/html/rfc5322#section-3.4.1
 ;;
 ;; punt and use a function from the mutt package that probably
@@ -141,8 +149,6 @@
   (check-true (email? "hi@bye.com"))
   (check-false (email? " "))
   (check-false (email? "@re.ew")))
-
-(provide email?)
 
 ;; https://tools.ietf.org/html/rfc1034#section-3.1
 ;;
@@ -163,8 +169,6 @@
         (else
          (host? x))))
 
-(provide hostname?)
-
 (module+ test
   (check-false (hostname? 4))
   (check-true (hostname? "localhost"))
@@ -181,14 +185,9 @@
                   ipv4?
                   ipv6?))
 
-(provide ipv4?)
-(provide ipv6?)
-
 (define (uri? x)
   (and (string? x)
        (string=? x (url->string (string->url x)))))
-
-(provide uri?)
 
 (module+ test
   (check-true (uri? "http://ddd.de"))
@@ -199,15 +198,9 @@
 (define (uri-reference? x)
   (string? x))
 
-(provide uri-reference?)
-
 ;; https://tools.ietf.org/html/rfc6570
-(require (only-in (file "uri-template.rkt")
+(require (only-in uri-template
                   uri-template?))
-
-(provide uri-template?)
 
 (require (only-in json-pointer
                   json-pointer?))
-
-(provide json-pointer?)
