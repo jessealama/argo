@@ -10,6 +10,7 @@
     "http"
     "sugar"
     "beautiful-racket-lib"
+    "web-server-lib"
     "json-pointer"
     "uri-template"))
 
