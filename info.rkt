@@ -2,7 +2,7 @@
 
 (define collection "argo")
 
-(define version "1.1.0")
+(define version "1.2.0")
 
 (define deps
   '("base"
@@ -12,7 +12,8 @@
     "beautiful-racket-lib"
     "web-server-lib"
     "json-pointer"
-    "uri-template"))
+    "uri-template"
+    "ejs"))
 
 (define build-deps
   '("scribble-lib"
