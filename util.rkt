@@ -1,5 +1,17 @@
 #lang racket
 
+(provide intersection
+         json-path?
+         json-files-in-directory
+         file-content/bytes
+         bytes->string
+         complain-and-die
+         url-has-only-fragment?
+         urls-equal?
+         let-test let*-test
+         peek-char/safe
+         read-char/safe)
+
 (require br/define)
 
 (require (only-in racket/list
@@ -23,8 +35,6 @@
               (member x l2-no-duplicates))
             (remove-duplicates l1))))
 
-(provide intersection)
-
 (module+ test
   (check-equal? (intersection (list 1 2) (list 1))
                (list 1))
@@ -42,14 +52,10 @@
     (and (bytes? ext)
          (bytes=? #".json" ext))))
 
-(provide json-path?)
-
 (define (json-files-in-directory dir)
   (let ([things (directory-list dir #:build? #t)])
     (let ([files (filter file-exists? things)])
       (filter json-path? files))))
-
-(provide json-files-in-directory)
 
 (define (file-content/bytes path)
   (let ([p (open-input-file path)])
@@ -57,21 +63,15 @@
         (port->bytes p)
       (close-input-port p))))
 
-(provide file-content/bytes)
-
 (define (bytes->string bstr)
   (define (fail err) #f)
   (with-handlers ([exn:fail:contract? fail])
     (bytes->string/utf-8 bstr)))
 
-(provide bytes->string)
-
 (define (complain-and-die message)
   (display message)
   (newline)
   (exit 1))
-
-(provide complain-and-die)
 
 (define (url-has-only-fragment? u)
   (and (eq? #f (url-scheme u))
@@ -82,8 +82,6 @@
        (empty? (url-path u))
        (empty? (url-query u))
        (string? (url-fragment u))))
-
-(provide url-has-only-fragment?)
 
 (module+ test
   (let ([empty-url (url #f #f #f #f #f (list) (list) #f)])
@@ -240,8 +238,6 @@
         (else
          (error "Arguments should be either strings or url? structures."))))
 
-(provide urls-equal?)
-
 (module+ test
   (let ([empty-url (url #f #f #f #f #f (list) (list) #f)])
     (check-true (urls-equal? empty-url empty-url))))
@@ -256,4 +252,12 @@
 (define-macro (let*-test BINDINGS EXPR ...)
   #'(let* BINDINGS (test-begin EXPR ...)))
 
-(provide let-test let*-test)
+(define/contract (peek-char/safe port)
+  (input-port? . -> . (or/c eof-object? char? false/c))
+  (with-handlers ([exn:fail? (const #f)])
+    (peek-char port)))
+
+(define/contract (read-char/safe port)
+  (input-port? . -> . (or/c eof-object? char? false/c))
+  (with-handlers ([exn:fail? (const #f)])
+    (read-char port)))

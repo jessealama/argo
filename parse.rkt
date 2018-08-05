@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require json)
+(require ejs)
 (require racket/port)
 (require http/request)
 (require (only-in net/url-string
@@ -15,8 +15,8 @@
 
 (define (parse-json-port p)
   (define (parse-fail err) (values #f #f))
-  (with-handlers ([exn:fail:read? parse-fail])
-    (let ([js (read-json p)])
+  (with-handlers ([exn:fail? parse-fail])
+    (let ([js (port->ejsexpr p)])
       (cond ((eof-object? js)
              (values #f #f))
             (else
@@ -27,8 +27,8 @@
 ;; string? -> jsexpr? boolean?
 (define (parse-json-string str)
   (define (parse-fail err) (values #f #f))
-  (with-handlers ([exn:fail:read? parse-fail])
-    (values (string->jsexpr str) #t)))
+  (with-handlers ([exn:fail? parse-fail])
+    (values (string->ejsexpr str) #t)))
 
 (module+ test
   (let ([js "x"])
@@ -44,7 +44,7 @@
 (define (parse-json-bytes bstr)
   (define (parse-fail err) (values #f #f))
   (with-handlers ([exn:fail:read? parse-fail])
-    (values (bytes->jsexpr bstr) #t)))
+    (values (bytes->ejsexpr bstr) #t)))
 
 (provide parse-json-bytes)
 
@@ -85,7 +85,7 @@
                      empty
                      (lambda (op) (write-bytes #"true" op)))])
     (let-values ([(js ok?) (parse-json-response r)])
-      (check-true (jsexpr? js))
+      (check-true (ejsexpr? js))
       (check-true ok?)
       (check-true js))))
 

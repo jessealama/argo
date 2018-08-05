@@ -3,8 +3,6 @@
 (module+ test
   (require rackunit))
 
-(require json)
-
 (require (only-in (file "parse.rkt")
                     parse-json-string
                     parse-json-url))
@@ -108,8 +106,8 @@ SCHEMA
   ))
 
 (module+ test
-  (require (only-in (file "json.rkt")
-                    json-equal?))
+  (require (only-in ejs
+                    equal-ejsexprs?))
   (define-values (geo/jsexp geo-ok?)
     (parse-json-string geo/str))
   (check-true geo-ok?)
@@ -120,7 +118,7 @@ SCHEMA
   ;; (define-values (resolved-geo resolved-ok?)
   ;;   (resolve-schema-wrt-id "http://json-schema.org/geo" #f (hasheq)))
   ;; (check-true resolved-ok?)
-  ;; (check-true (json-equal? resolved-geo geo/jsexp))
+  ;; (check-true (equal-ejsexprs? resolved-geo geo/jsexp))
   )
 
 (module+ test
@@ -175,4 +173,4 @@ FULL_SCHEMA
   (define-values (resolved-value resolved?)
     (resolve-schema-wrt-id "#/definitions/address" #f full-schema/jsexpr))
   (check-true resolved?)
-  (check-true (json-equal? resolved-value address/jsexpr)))
+  (check-true (equal-ejsexprs? resolved-value address/jsexpr)))

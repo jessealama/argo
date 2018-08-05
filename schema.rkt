@@ -1,26 +1,18 @@
 #lang racket/base
 
-(require (only-in json
-                  jsexpr?)
-         (only-in sugar
+(require (only-in sugar
                   members-unique?)
          (only-in racket/list
                   check-duplicates)
+         ejs
          (only-in (file "json.rkt")
-                  json-string
-                  json-number?
                   json-non-negative-integer?
-                  json-boolean?
-                  json-object?
-                  json-string?
-                  json-array?
                   empty-array?
                   array-items
                   has-property?
                   property-value
                   object-properties
-                  object-values
-                  json-equal?)
+                  object-values)
          (only-in net/url-string
                   string->url)
          (only-in net/url-structs
@@ -56,31 +48,31 @@
   (list? (member thing json-schema-types)))
 
 (define (acceptable-value-for-type? value)
-  (cond ((json-string? value)
+  (cond ((ejs-string? value)
          (json-schema-type? value))
-        ((json-array? value)
+        ((ejs-array? value)
          (and (members-unique? value)
               (andmap json-schema-type? value)))
         (else
          #f)))
 
 (define (acceptable-value-for-multipleOf? value)
-  (cond ((json-number? value)
+  (cond ((ejs-number? value)
          (> value 0))
         (else
          #f)))
 
 (define (acceptable-value-for-maximum? value)
-  (json-number? value))
+  (ejs-number? value))
 
 (define (acceptable-value-for-exclusiveMaximum? value)
-  (json-boolean? value))
+  (ejs-boolean? value))
 
 (define (acceptable-value-for-minimum? value)
-  (json-number? value))
+  (ejs-number? value))
 
 (define (acceptable-value-for-exclusiveMinimum? value)
-  (json-number? value))
+  (ejs-number? value))
 
 (define (acceptable-value-for-maxLength? value)
   (json-non-negative-integer? value))
@@ -89,15 +81,15 @@
   (json-non-negative-integer? value))
 
 (define (acceptable-value-for-pattern? value)
-  (cond ((json-string? value)
+  (cond ((ejs-string? value)
          (ecma-262-regexp? value))
         (else
          #f)))
 
 (define (acceptable-value-for-items? value)
-  (cond ((json-array? value)
+  (cond ((ejs-array? value)
          (andmap json-schema? (array-items value)))
-        ((json-object? value)
+        ((ejs-object? value)
          (json-schema? value))
         (else
          #f)))
@@ -112,7 +104,7 @@
   (json-non-negative-integer? value))
 
 (define (acceptable-value-for-uniqueItems? value)
-  (json-boolean? value))
+  (ejs-boolean? value))
 
 (define (acceptable-value-for-contains? value)
   (json-schema? value))
@@ -124,18 +116,18 @@
   (json-non-negative-integer? value))
 
 (define (acceptable-value-for-required? value)
-  (and (json-array? value)
-       (andmap json-string? value)
+  (and (ejs-array? value)
+       (andmap ejs-string? value)
        (members-unique? value)))
 
 (define (acceptable-value-for-properties? value)
-  (cond ((json-object? value)
+  (cond ((ejs-object? value)
          (andmap json-schema? (object-values value)))
         (else
          #f)))
 
 (define (acceptable-value-for-patternProperties? value)
-  (cond ((json-object? value)
+  (cond ((ejs-object? value)
          (and (andmap ecma-262-regexp? (map symbol->string (object-properties value)))
               (andmap json-schema? (object-values value))))
         (else
@@ -145,11 +137,11 @@
   (json-schema? value))
 
 (define (acceptable-value-for-dependencies? value)
-  (cond ((json-object? value)
+  (cond ((ejs-object? value)
          (andmap (lambda (x)
                    (or (json-schema? x)
-                       (and (json-array? x)
-                            (andmap json-string? x)
+                       (and (ejs-array? x)
+                            (andmap ejs-string? x)
                             (members-unique? x))))
                  (object-values value)))
         (else
@@ -159,31 +151,31 @@
   (json-schema? value))
 
 (define (acceptable-value-for-enum? value)
-  (cond ((json-array? value)
+  (cond ((ejs-array? value)
          (and (not (empty-array? value))
-              (not (check-duplicates value json-equal?))))
+              (not (check-duplicates value equal-ejsexprs?))))
         (else
          #f)))
 
 (define (acceptable-value-for-const? value)
-  #t)
+  (ejsexpr? value))
 
 (define (acceptable-value-for-allOf? value)
-  (cond ((json-array? value)
+  (cond ((ejs-array? value)
          (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
          #f)))
 
 (define (acceptable-value-for-anyOf? value)
-  (cond ((json-array? value)
+  (cond ((ejs-array? value)
          (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
          #f)))
 
 (define (acceptable-value-for-oneOf? value)
-  (cond ((json-array? value)
+  (cond ((ejs-array? value)
          (and (not (empty-array? value))
               (andmap json-schema? value)))
         (else
@@ -193,34 +185,33 @@
   (json-schema? value))
 
 (define (acceptable-value-for-definitions? value)
-  (and (json-object? value)
+  (and (ejs-object? value)
        (andmap json-schema?
                (object-values value))))
 
 (define (acceptable-value-for-title? value)
-  (json-string? value))
+  (ejs-string? value))
 
 (define (acceptable-value-for-description? value)
-  (json-string? value))
+  (ejs-string? value))
 
 (define (acceptable-value-for-default? value)
   #t)
 
 (define (acceptable-value-for-examples? value)
-  (json-array? value))
+  (ejs-array? value))
 
 (define (acceptable-value-for-format? value)
   (member value
-          (map json-string
-               (list "date-time"
-                     "email"
-                     "hostname"
-                     "ipv4"
-                     "ipv6"
-                     "uri"
-                     "uri-reference"
-                     "uri-template"
-                     "json-pointer"))))
+          (list "date-time"
+                "email"
+                "hostname"
+                "ipv4"
+                "ipv6"
+                "uri"
+                "uri-reference"
+                "uri-template"
+                "json-pointer")))
 
 (define (acceptable-value-for-$ref? value)
   (and (string? value)
@@ -329,11 +320,11 @@
     (check-not-false (member keyword keywords))))
 
 (define (json-schema? thing)
-  (cond ((not (jsexpr? thing))
+  (cond ((not (ejsexpr? thing))
          #f)
-        ((json-boolean? thing)
+        ((ejs-boolean? thing)
          #t)
-        ((json-object? thing)
+        ((ejs-object? thing)
          (let* ([properties (object-properties thing)]
                 [checkable (intersection properties
                                          json-schema-keywords)])
@@ -359,9 +350,9 @@
   (check-false (json-schema? (hasheq "type" "object")))
   (check-false (json-schema? (hasheq 'type #f)))
   (let ([js (hasheq 'type "object")])
-    (check-true (json-object? js))
+    (check-true (ejs-object? js))
     (check-true (has-property? js 'type))
-    (check-true (json-string? (property-value js 'type)))
+    (check-true (ejs-string? (property-value js 'type)))
     (check-true (json-schema? js)))
 
   (check-false (json-schema? (hasheq 'type "foo")))
@@ -406,7 +397,7 @@
      'additionalItems #t))
   (test-case
       "Simple check"
-    (check-true (jsexpr? schema-1/jsexper))
+    (check-true (ejsexpr? schema-1/jsexper))
     (check-true (json-schema? (hasheq)))))
 
 (module+ test

@@ -3,13 +3,9 @@
 (require (only-in json
                   jsexpr?))
 
+(require ejs)
+
 (require (only-in (file "json.rkt")
-                  json-null?
-                  json-number?
-                  json-boolean?
-                  json-string?
-                  json-array?
-                  json-object?
                   array-length
                   array-items
                   count-properties
@@ -73,15 +69,15 @@
     (define (indent str)
       (indent-lines/str str level))
     (let ([pad (make-pad level)])
-      (cond ((json-null? x)
+      (cond ((ejs-null? x)
              "null")
-            ((json-number? x)
+            ((ejs-number? x)
              (format "~a" x))
-            ((json-boolean? x)
+            ((ejs-boolean? x)
              (if x "true" "false"))
-            ((json-string? x)
+            ((ejs-string? x)
              (format "~s" x))
-            ((json-array? x)
+            ((ejs-array? x)
              (let ([num-items (array-length x)]
                    [items (array-items x)])
                (if (= num-items 0)
@@ -101,7 +97,7 @@
                        (display (indent-lines/str (pp (last items) 0) 1))
                        (newline)
                        (display "]"))))))
-            ((json-object? x)
+            ((ejs-object? x)
              (let ([num-props (count-properties x)])
                (if (= num-props 0)
                    "{}"

@@ -1,15 +1,8 @@
 #lang racket/base
 
-(require (only-in json
-                  jsexpr?))
+(require ejs)
 
 (require (only-in (file "json.rkt")
-                  json-null?
-                  json-number?
-                  json-boolean?
-                  json-string?
-                  json-array?
-                  json-object?
                   array-length
                   array-items
                   count-properties
@@ -34,17 +27,17 @@
   (require rackunit))
 
 (define (json-in-one-line js)
-  (unless (jsexpr? js)
-    (error "Not a jsepr? value."))
-  (cond ((json-null? js)
+  (unless (ejsexpr? js)
+    (error "Not a ejsexpr? value."))
+  (cond ((ejs-null? js)
          "null")
-        ((json-number? js)
+        ((ejs-number? js)
          (format "~a" js))
-        ((json-boolean? js)
+        ((ejs-boolean? js)
          (if js "true" "false"))
-        ((json-string? js)
+        ((ejs-string? js)
          (format "~s" js))
-        ((json-array? js)
+        ((ejs-array? js)
          (let ([num-items (array-length js)]
                [items (array-items js)])
            (if (= num-items 0)
@@ -61,7 +54,7 @@
                    ;; last item
                    (display (json-in-one-line (last items)))
                    (display "]"))))))
-            ((json-object? js)
+            ((ejs-object? js)
              (let ([num-props (count-properties js)])
                (if (= num-props 0)
                    "{}"
