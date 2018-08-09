@@ -12,8 +12,8 @@
                   parse-json-file))
 (require (only-in (file "schema.rkt")
                   json-schema?))
-(require (only-in (file "json.rkt")
-                  json-equal?))
+(require (only-in ejs
+                  equal-ejsexprs?))
 (require (only-in (file "validate.rkt")
                   adheres-to-schema?))
 (require (only-in json-pointer
@@ -135,9 +135,9 @@ support     how to support Argo development")))
   (unless instance-2-well-formed?
     (complain-and-die (format "\"~a\" is malformed JSON."
                               instance-path-2)))
-  (define equal-json? (json-equal? instance-1-jsexpr instance-2-jsexpr))
+  (define equal-json? (equal-ejsexprs? instance-1-jsexpr instance-2-jsexpr))
   (cond ((quiet-mode?)
-         (exit (if json-equal? 0 1)))
+         (exit (if equal-json? 0 1)))
         (else
          (display (if equal-json?
                       "JSON files are equal."
