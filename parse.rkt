@@ -43,7 +43,7 @@
 ;; bytes? -> jsexpr? boolean?
 (define (parse-json-bytes bstr)
   (define (parse-fail err) (values #f #f))
-  (with-handlers ([exn:fail:read? parse-fail])
+  (with-handlers ([exn:fail? parse-fail])
     (values (bytes->ejsexpr bstr) #t)))
 
 (provide parse-json-bytes)
