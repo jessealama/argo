@@ -5,6 +5,7 @@
          (only-in racket/list
                   check-duplicates)
          ejs
+         racket/contract
          (only-in (file "json.rkt")
                   json-non-negative-integer?
                   empty-array?
@@ -35,7 +36,8 @@
 (module+ test
   (require rackunit))
 
-(define json-schema-types
+(define/contract json-schema-types
+  (listof string?)
   (list "object"
 	"array"
         "string"
@@ -45,7 +47,8 @@
 	"null"))
 
 (define (json-schema-type? thing)
-  (list? (member thing json-schema-types)))
+  (and (string? thing)
+       (list? (member thing json-schema-types string=?))))
 
 (define (acceptable-value-for-type? value)
   (cond ((ejs-string? value)
