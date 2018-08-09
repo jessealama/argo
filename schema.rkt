@@ -69,7 +69,7 @@
   (ejs-number? value))
 
 (define (acceptable-value-for-exclusiveMaximum? value)
-  (ejs-boolean? value))
+  (ejs-number? value))
 
 (define (acceptable-value-for-minimum? value)
   (ejs-number? value))
