@@ -3,8 +3,6 @@
 (require (only-in json
                   jsexpr?))
 
-(require ejs)
-
 (require (only-in (file "json.rkt")
                   array-length
                   array-items

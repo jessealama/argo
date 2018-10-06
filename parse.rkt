@@ -1,6 +1,5 @@
 #lang racket/base
 
-(require ejs)
 (require racket/port)
 (require http/request)
 (require (only-in net/url-string
@@ -9,6 +8,12 @@
 (require web-server/http/response-structs)
 (require (only-in racket/list
                   empty))
+(require (only-in (file "./parse-json.rkt")
+                  port->ejsexpr
+                  string->ejsexpr
+                  bytes->ejsexpr))
+(require (only-in (file "./value.rkt")
+                  ejsexpr?))
 
 (module+ test
   (require rackunit))

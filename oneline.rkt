@@ -1,7 +1,5 @@
 #lang racket/base
 
-(require ejs)
-
 (require (only-in (file "json.rkt")
                   array-length
                   array-items
