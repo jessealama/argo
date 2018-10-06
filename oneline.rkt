@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require (only-in (file "json.rkt")
+(require (only-in (file "./json.rkt")
                   array-length
                   array-items
                   count-properties
