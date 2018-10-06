@@ -5,19 +5,22 @@
          check-json/schema
          json-pretty-print
          json-in-one-line
-         parse-json)
+         parse-json
+         (rename-out [equal-ejsexprs? json-equal?]))
 
-(require (only-in (file "schema.rkt")
+(require (only-in (file "./schema.rkt")
                   json-schema?))
-(require (only-in (file "validate.rkt")
+(require (only-in (file "./validate.rkt")
                   adheres-to-schema?
                   check-json/schema))
-(require (only-in (file "pp.rkt")
+(require (only-in (file "./pp.rkt")
                   json-pretty-print))
-(require (only-in (file "oneline.rkt")
+(require (only-in (file "./oneline.rkt")
                   json-in-one-line))
-(require (only-in (file "parse.rkt")
+(require (only-in (file "./parse.rkt")
                   parse-json))
+(require (only-in (file "./equal.rkt")
+                  equal-ejsexprs?))
 
 ;; Checking at the command line
 
