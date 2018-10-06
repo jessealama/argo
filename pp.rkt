@@ -1,14 +1,13 @@
 #lang racket/base
 
-(require (only-in json
-                  jsexpr?))
-
-(require (only-in (file "json.rkt")
+(require (only-in (file "./json.rkt")
                   array-length
                   array-items
                   count-properties
                   object-properties
                   property-value))
+
+(require (file "./value.rkt"))
 
 (require (only-in racket/port
                   with-output-to-string))
