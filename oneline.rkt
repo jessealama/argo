@@ -21,6 +21,8 @@
                   string-split
                   string-trim))
 
+(require (file "./value.rkt"))
+
 (module+ test
   (require rackunit))
 
