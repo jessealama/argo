@@ -20,7 +20,7 @@
     "rackunit-lib"
     "beautiful-racket-lib"))
 
-(define pkg-desc "Argo is a JSON Schema validator.")
+(define pkg-desc "JSON Schema validator")
 
 (define pkg-authors '("jesse@lisp.sh"))
 
