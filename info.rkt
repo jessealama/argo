@@ -12,7 +12,8 @@
     "beautiful-racket-lib"
     "web-server-lib"
     "json-pointer"
-    "uri-template"))
+    "uri-template"
+    "ejs"))
 
 (define build-deps
   '("scribble-lib"
