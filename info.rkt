@@ -21,11 +21,6 @@
     "rackunit-lib"
     "beautiful-racket-lib"))
 
-(define update-implies
-  ("json-pointer"
-   "uri-template"
-   "ejs"))
-
 (define pkg-desc "JSON Schema validator")
 
 (define pkg-authors '("jesse@lisp.sh"))
