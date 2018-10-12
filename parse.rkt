@@ -8,12 +8,11 @@
 (require web-server/http/response-structs)
 (require (only-in racket/list
                   empty))
-(require (only-in (file "./parse-json.rkt")
+(require (only-in ejs
+                  ejsexpr?
                   port->ejsexpr
                   string->ejsexpr
                   bytes->ejsexpr))
-(require (only-in (file "./value.rkt")
-                  ejsexpr?))
 
 (module+ test
   (require rackunit))

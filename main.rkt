@@ -6,7 +6,6 @@
          json-pretty-print
          json-in-one-line
          parse-json
-         equal-ejsexprs?
          ejsexpr?
          ejsexpr->string)
 
@@ -21,12 +20,9 @@
                   json-in-one-line))
 (require (only-in (file "./parse.rkt")
                   parse-json))
-(require (only-in (file "./equal.rkt")
-                  equal-ejsexprs?))
-(require (only-in (file "./value.rkt")
-                  ejsexpr?)
-         (only-in (file "./render.rkt")
-                  ejsexpr->string))
+(require (only-in ejs
+                  ejsexpr->string
+                  ejsexpr?))
 
 ;; Checking at the command line
 

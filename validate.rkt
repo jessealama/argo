@@ -11,15 +11,13 @@
 (require (only-in (file "parameters.rkt")
                   current-id))
 
-(require (only-in (file "./value.rkt")
+(require (only-in ejs
                   ejsexpr?
                   ejs-boolean?
                   ejs-object?
                   ejs-number?
                   ejs-string?
-                  ejs-array?))
-
-(require (only-in (file "./equal.rkt")
+                  ejs-array?
                   equal-ejsexprs?))
 
 (require (only-in (file "parse.rkt")

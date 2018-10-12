@@ -1,8 +1,5 @@
 #lang racket/base
 
-(require (only-in json
-                  jsexpr?
-                  jsexpr->string))
 (require (only-in (file "util.rkt")
                   file-content/bytes
                   bytes->string
