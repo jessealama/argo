@@ -34,57 +34,6 @@
 
 ;; constructors
 
-(define (json-string x)
-  (unless (string? x)
-    (error "To make a JSON string, a Racket string is required."))
-  x)
-
-(provide json-string)
-
-(define (json-number x)
-  (unless (real? x)
-    (error "To make a JSON number, a Racket real? value is required." x))
-  x)
-
-(provide json-number)
-
-(define/contract (json-array . items)
-  ((listof ejsexpr?) . -> . ejs-array?)
-  (apply list items))
-
-(provide json-array)
-
-;; assumes that x is already a jsexpr? value
-(define (json-boolean? x)
-  (boolean? x))
-
-(provide json-boolean?)
-
-(define (json-true-value? x)
-  (eq? x #t))
-
-(provide json-true-value?)
-
-(define (json-false-value? x)
-  (eq? x #f))
-
-(provide json-false-value?)
-
-(define (array-items arr)
-  arr)
-
-(provide array-items)
-
-(define (array-ref arr idx)
-  (list-ref (array-items arr) idx))
-
-(provide array-ref)
-
-(define (array-length arr)
-  (length (array-items arr)))
-
-(provide array-length)
-
 (define (has-property? obj prop)
   (cond ((symbol? prop)
          (hash-has-key? obj prop))

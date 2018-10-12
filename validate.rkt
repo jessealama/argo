@@ -31,14 +31,10 @@
                   read-entity/bytes))
 
 (require (only-in (file "json.rkt")
-                  json-true-value?
-                  json-false-value?
                   has-property?
                   property-value
                   object-properties
                   remove-property
-                  array-items
-                  array-length
                   count-properties
                   has-type?))
 
@@ -81,7 +77,7 @@
     ; (log-error (format "data = ~a" data))
     ; (log-error (format "schema = ~a" schema))
     (cond ((ejs-boolean? schema)
-           (json-true-value? schema))
+           (eq? schema #t))
           ((ejs-object? schema)
            (cond ((has? '$id)
                   (parameterize ([current-id (get '$id)])
@@ -151,10 +147,10 @@
                         (and (cond ((json-schema? v)
                                     (andmap (lambda (item)
                                               (valid? item v))
-                                            (array-items data)))
+                                            data))
                                    ((ejs-array? v)
-                                    (let ([checks (for/list ([i (array-items data)]
-                                                             [s (array-items v)])
+                                    (let ([checks (for/list ([i data]
+                                                             [s v])
                                                     (valid? i s))])
                                       (andmap identity checks)))
                                    (else
@@ -187,22 +183,22 @@
                       (valid-w/o? 'additionalProperties)))
                  ((has? 'maxItems)
                   (if (ejs-array? data)
-                      (if (<= (array-length data) (get 'maxItems))
+                      (if (<= (length data) (get 'maxItems))
                           (valid-w/o? 'maxItems)
                           #f)
                       (valid-w/o? 'maxItems)))
                  ((has? 'minItems)
                   ; (log-error "Working on minItems")
                   (if (ejs-array? data)
-                      (and (>= (array-length data) (get 'minItems))
+                      (and (>= (length data) (get 'minItems))
                            (valid-w/o? 'minItems))
                       (valid-w/o? 'minItems)))
                  ((has? 'uniqueItems)
                   ; (log-error "considering uniqueItems")
-                  (if (json-false-value? (get 'uniqueItems))
+                  (if (eq? #f (get 'uniqueItems))
                       (valid-w/o? 'uniqueItems)
                       (if (ejs-array? data)
-                          (let ([check (check-duplicates (array-items data)
+                          (let ([check (check-duplicates data
                                                          equal-ejsexprs?)])
                             (and (eq? check #f)
                                  (valid-w/o? 'uniqueItems)))
@@ -212,7 +208,7 @@
                       (let ([s (get 'contains)])
                         (if (ormap (lambda (item)
                                      (valid? item s))
-                                   (array-items data))
+                                   data)
                             (valid-w/o? 'contains)
                             #f))
                       (valid-w/o? 'contains)))
@@ -235,7 +231,7 @@
                       (let ([required (get 'required)])
                         (and (andmap (lambda (prop)
                                        (has-property? data prop))
-                                     (array-items required))
+                                     required)
                              (valid-w/o? 'required)))
                       (valid-w/o? 'required)))
                  ((has? 'properties)
@@ -276,7 +272,7 @@
                             (cond ((ejs-array? dependency-value)
                                    (andmap (lambda (dep-prop)
                                              (has-property? data dep-prop))
-                                           (array-items dependency-value)))
+                                           dependency-value))
                                   ((ejs-object? dependency-value)
                                    (valid? data dependency-value))
                                   (else
@@ -300,7 +296,7 @@
                  ((has? 'enum)
                   (and (ormap (lambda (x)
                                 (equal-ejsexprs? x data))
-                              (array-items (get 'enum)))
+                              (get 'enum))
                        (valid-w/o? 'enum)))
                  ((has? 'const)
                   (and (equal-ejsexprs? data (get 'const))
@@ -312,15 +308,15 @@
                  ((has? 'allOf)
                   (and (andmap (lambda (s)
                                  (valid? data s))
-                               (array-items (get 'allOf)))
+                               (get 'allOf))
                        (valid-w/o? 'allOf)))
                  ((has? 'anyOf)
                   (and (ormap (lambda (s)
                                 (valid? data s))
-                              (array-items (get 'anyOf)))
+                              (get 'anyOf))
                        (valid-w/o? 'anyOf)))
                  ((has? 'oneOf)
-                  (let* ([items (array-items (get 'oneOf))]
+                  (let* ([items (get 'oneOf)]
                          [succeeds (filter (lambda (s)
                                              (valid? data s))
                                            items)])

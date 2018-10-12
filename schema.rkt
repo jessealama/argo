@@ -9,7 +9,6 @@
          (only-in (file "json.rkt")
                   json-non-negative-integer?
                   empty-array?
-                  array-items
                   has-property?
                   property-value
                   object-properties
@@ -91,7 +90,7 @@
 
 (define (acceptable-value-for-items? value)
   (cond ((ejs-array? value)
-         (andmap json-schema? (array-items value)))
+         (andmap json-schema? value))
         ((ejs-object? value)
          (json-schema? value))
         (else

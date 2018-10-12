@@ -1,8 +1,6 @@
 #lang racket/base
 
 (require (only-in (file "./json.rkt")
-                  array-length
-                  array-items
                   count-properties
                   object-properties
                   property-value))
@@ -75,8 +73,8 @@
             ((ejs-string? x)
              (format "~s" x))
             ((ejs-array? x)
-             (let ([num-items (array-length x)]
-                   [items (array-items x)])
+             (let ([num-items (length x)]
+                   [items x])
                (if (= num-items 0)
                    "[]"
                    (with-output-to-string
