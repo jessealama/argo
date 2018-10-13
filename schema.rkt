@@ -8,7 +8,6 @@
          racket/contract
          (only-in (file "json.rkt")
                   json-non-negative-integer?
-                  empty-array?
                   has-property?
                   property-value
                   object-properties
@@ -153,35 +152,27 @@
   (json-schema? value))
 
 (define (acceptable-value-for-enum? value)
-  (cond ((ejs-array? value)
-         (and (not (empty-array? value))
-              (not (check-duplicates value equal-ejsexprs?))))
-        (else
-         #f)))
+  (and (ejs-array? value)
+       (not (empty? value))
+       (not (check-duplicates value equal-ejsexprs?))))
 
 (define (acceptable-value-for-const? value)
   (ejsexpr? value))
 
 (define (acceptable-value-for-allOf? value)
-  (cond ((ejs-array? value)
-         (and (not (empty-array? value))
-              (andmap json-schema? value)))
-        (else
-         #f)))
+  (and (ejs-array? value)
+       (not (empty? value))
+       (andmap json-schema? value)))
 
 (define (acceptable-value-for-anyOf? value)
-  (cond ((ejs-array? value)
-         (and (not (empty-array? value))
-              (andmap json-schema? value)))
-        (else
-         #f)))
+  (and (ejs-array? value)
+       (not (empty? value))
+       (andmap json-schema? value)))
 
 (define (acceptable-value-for-oneOf? value)
-  (cond ((ejs-array? value)
-         (and (not (empty-array? value))
-              (andmap json-schema? value)))
-        (else
-         #f)))
+  (and (ejs-array? value)
+       (not (empty? value))
+       (andmap json-schema? value)))
 
 (define (acceptable-value-for-not? value)
   (json-schema? value))
