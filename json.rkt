@@ -93,29 +93,27 @@
 (define (count-properties js)
   (length (object-properties js)))
 
-(provide count-properties)
+(define/contract (has-type? data type)
+  (ejsexpr? string? . -> . boolean?)
+  (match type
+    ["null"
+     (ejs-null? data)]
+    ["boolean"
+     (ejs-boolean? data)]
+    ["number"
+     (ejs-number? data)]
+    ["integer"
+     (ejs-integer? data)]
+    ["object"
+     (ejs-object? data)]
+    ["array"
+     (ejs-array? data)]
+    ["string"
+     (ejs-string? data)]
+    [else
+     (error "Unknown JSON data type: " type)]))
 
-(define (has-type? data type)
-  (unless (string? type)
-    (error "Type should be a string: " type))
-  (cond ((string=? type "null")
-         (ejs-null? data))
-        ((string=? type "boolean")
-         (ejs-boolean? data))
-        ((string=? type "number")
-         (ejs-number? data))
-        ((string=? type "integer")
-         (ejs-integer? data))
-        ((string=? type "object")
-         (ejs-object? data))
-        ((string=? type "array")
-         (ejs-array? data))
-        ((string=? type "string")
-         (ejs-string? data))
-        (else
-         (error "Unknown JSON data type: " type))))
 
-(provide has-type?)
 
 ;; Command line application for testing whether a file is
 ;; a JSON file at all
