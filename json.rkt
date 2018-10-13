@@ -126,13 +126,17 @@
      #:program "json"
      #:args (json-path)
      json-path))
+
   (unless (file-exists? json-path)
     (complain-and-die (format "Schema file \"~a\" does not exist." json-path)))
+
   (define (parse-fail err) #f)
   (define json/bytes (file-content/bytes json-path))
   (define json/string (bytes->string json/bytes))
+
   (when (eq? json/string #f)
     (complain-and-die (format "Contents of \"~a\" cannot be interpreted as a UTF-8 string." json-path)))
+
   (define-values (json/jsexpr json-well-formed?)
     (parse-json-string json/string))
   (exit (if json-well-formed?
