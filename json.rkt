@@ -1,94 +1,75 @@
 #lang racket/base
 
-(require (only-in ejs
-                  ejsexpr?
-                  equal-ejsexprs?
+(provide has-type?
+         has-property?
+         property-value
+         object-properties
+         object-values
+         json-non-negative-integer?
+         remove-property
+         count-properties)
+
+(require (only-in (file "parse.rkt")
+                  parse-json-string)
+         (only-in (file "util.rkt")
+                  complain-and-die
+                  file-content/bytes
+                  bytes->string)
+         (only-in ejs
                   ejs-null?
                   ejs-boolean?
                   ejs-number?
                   ejs-integer?
                   ejs-string?
                   ejs-array?
-                  ejs-object?))
-
-(require (only-in racket/list
+                  ejs-object?)
+         (only-in racket/cmdline
+                  command-line)
+         racket/contract
+         (only-in racket/list
                   empty?
                   first
                   rest))
-
-(require (only-in racket/cmdline
-                  command-line))
-
-(require (only-in (file "util.rkt")
-                  complain-and-die
-                  file-content/bytes
-                  bytes->string))
-
-(require (only-in (file "parse.rkt")
-                  parse-json-string))
-
-(require racket/contract)
 
 (module+ test
   (require rackunit))
 
 ;; constructors
 
-(define (has-property? obj prop)
+(define/contract (has-property? obj prop)
+  (ejs-object? (or/c symbol? string?) . -> . boolean?)
   (cond ((symbol? prop)
          (hash-has-key? obj prop))
         ((string? prop)
-         (hash-has-key? obj (string->symbol prop)))
-        (else
-         #f)))
+         (hash-has-key? obj (string->symbol prop)))))
 
 (module+ test
-  (let ([obj (hasheq
-              'foo "bar")])
+  (let-test ([obj (hasheq 'foo "bar")])
     (check-true (ejs-object? obj))
     (check-true (has-property? obj 'foo))
     (check-true (has-property? obj "foo"))
     (check-false (has-property? obj 'bar))
     (check-false (has-property? obj "bar"))))
 
-(provide has-property?)
-
-(define (property-value obj prop)
-  (cond ((symbol? prop)
-         (hash-ref obj prop))
-        ((string? prop)
-         (hash-ref obj (string->symbol prop)))
-        (else
-         (error "Property should be either a symbol or a string." prop))))
-
-(provide property-value)
-
-;; assumes x is a json-array? value
-(define (empty-array? x)
-  (empty? x))
-
-(provide empty-array?)
+(define/contract (property-value obj prop)
+  (ejs-object? (or/c string? symbol?) . -> . boolean?)
+  (cond [(symbol? prop)
+         (hash-ref obj prop)]
+        [(string? prop)
+         (hash-ref obj (string->symbol prop))]))
 
 (define (object-properties obj)
   (hash-keys obj))
 
-(provide object-properties)
-
 (define (object-values obj)
   (hash-values obj))
-
-(provide object-values)
 
 (define (json-non-negative-integer? x)
   (and (ejs-integer? x)
        (<= 0 x)))
 
-(provide json-non-negative-integer?)
-
 (define (remove-property jsobj prop)
   (hash-remove jsobj prop))
-
-(provide remove-property)
 
 (define (count-properties js)
   (length (object-properties js)))
@@ -137,6 +118,7 @@
 
   (define-values (json/jsexpr json-well-formed?)
     (parse-json-string json/string))
+
   (exit (if json-well-formed?
             0
             1)))
