@@ -7,7 +7,7 @@
                   first
                   rest)
          racket/contract
-         (file "./value.rkt"))
+         ejs)
 
 (module+ test
   (require rackunit))

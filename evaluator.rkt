@@ -6,12 +6,12 @@
 (require (only-in racket/match
                   match)
          racket/contract
+         ejs
          (only-in racket/list
                   first
                   drop-right)
          (only-in racket/hash
-                  hash-union)
-         (file "value.rkt"))
+                  hash-union))
 
 (define/contract (eval-object-item item)
   (list? . -> . ejs-object?)

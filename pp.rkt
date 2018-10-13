@@ -5,7 +5,7 @@
                   object-properties
                   property-value))
 
-(require (file "./value.rkt"))
+(require ejs)
 
 (require (only-in racket/port
                   with-output-to-string))

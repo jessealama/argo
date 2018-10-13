@@ -19,7 +19,7 @@
                   string-split
                   string-trim))
 
-(require (file "./value.rkt"))
+(require ejs)
 
 (module+ test
   (require rackunit))
