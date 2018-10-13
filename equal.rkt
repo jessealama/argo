@@ -40,20 +40,6 @@
 
 (provide property-value)
 
-;; assumes x is a ejs-array? value
-(define (empty-array? x)
-  (empty? x))
-
-(provide empty-array?)
-
-(module+ test
-  (test-case "Basic JSON object check"
-    (check-false (ejs-object? 5))
-    (check-false (ejs-object? #t))
-    (check-false (ejs-object? (list)))
-    (check-true (ejs-object? (hasheq)))
-    (check-true (ejs-object? (hasheq 'type "object")))))
-
 (define (object-properties obj)
   (hash-keys obj))
 
