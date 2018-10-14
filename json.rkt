@@ -16,6 +16,7 @@
                   file-content/bytes
                   bytes->string)
          (only-in ejs
+                  ejsexpr?
                   ejs-null?
                   ejs-boolean?
                   ejs-number?
@@ -25,6 +26,7 @@
                   ejs-object?)
          (only-in racket/cmdline
                   command-line)
+         racket/match
          racket/contract
          (only-in racket/list
                   empty?
@@ -58,20 +60,25 @@
         [(string? prop)
          (hash-ref obj (string->symbol prop))]))
 
-(define (object-properties obj)
+(define/contract (object-properties obj)
+  (ejs-object? . -> . (listof symbol?))
   (hash-keys obj))
 
-(define (object-values obj)
+(define/contract (object-values obj)
+  (ejs-object? . -> . (listof ejsexpr?))
   (hash-values obj))
 
-(define (json-non-negative-integer? x)
+(define/contract (json-non-negative-integer? x)
+  (ejsexpr? . -> . boolean?)
   (and (ejs-integer? x)
        (<= 0 x)))
 
-(define (remove-property jsobj prop)
+(define/contract (remove-property jsobj prop)
+  (ejs-object? symbol? . -> . ejs-object?)
   (hash-remove jsobj prop))
 
-(define (count-properties js)
+(define/contract (count-properties js)
+  (ejs-object? . -> . exact-nonnegative-integer?)
   (length (object-properties js)))
 
 (define/contract (has-type? data type)
@@ -93,8 +100,6 @@
      (ejs-string? data)]
     [else
      (error "Unknown JSON data type: " type)]))
-
-
 
 ;; Command line application for testing whether a file is
 ;; a JSON file at all

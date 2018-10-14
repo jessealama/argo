@@ -1,35 +1,36 @@
 #lang racket/base
 
-(require (only-in sugar
-                  members-unique?)
-         (only-in racket/list
-                  check-duplicates)
-         ejs
-         racket/contract
+(require (only-in (file "regexp.rkt")
+                  ecma-262-regexp?)
          (only-in (file "json.rkt")
                   json-non-negative-integer?
                   has-property?
                   property-value
                   object-properties
                   object-values)
-         (only-in net/url-string
-                  string->url)
-         (only-in net/url-structs
-                  url-fragment)
-         (only-in (file "regexp.rkt")
-                  ecma-262-regexp?)
+         (only-in (file "parse.rkt")
+                  parse-json)
          (only-in (file "util.rkt")
                   intersection
                   complain-and-die
                   file-content/bytes
                   bytes->string)
+         ejs
+         (only-in net/url-string
+                  string->url)
+         (only-in net/url-structs
+                  url-fragment)
          (only-in racket/cmdline
                   command-line)
-         (only-in (file "parse.rkt")
-                  parse-json)
+         (only-in racket/list
+                  empty?
+                  check-duplicates)
          (only-in (file "format.rkt")
                   uri-reference?
-                  json-pointer?))
+                  json-pointer?)
+         racket/contract
+         (only-in sugar
+                  members-unique?))
 
 (module+ test
   (require rackunit))
@@ -44,11 +45,13 @@
 	"number"
 	"null"))
 
-(define (json-schema-type? thing)
+(define/contract (json-schema-type? thing)
+  (any . -> . boolean?)
   (and (string? thing)
        (list? (member thing json-schema-types string=?))))
 
-(define (acceptable-value-for-type? value)
+(define/contract (acceptable-value-for-type? value)
+  (ejsexpr? . -> . boolean?)
   (cond ((ejs-string? value)
          (json-schema-type? value))
         ((ejs-array? value)
@@ -57,11 +60,10 @@
         (else
          #f)))
 
-(define (acceptable-value-for-multipleOf? value)
-  (cond ((ejs-number? value)
-         (> value 0))
-        (else
-         #f)))
+(define/contract (acceptable-value-for-multipleOf? value)
+  (ejsexpr? . -> . boolean?)
+  (and (ejs-number? value)
+       (> value 0)))
 
 (define (acceptable-value-for-maximum? value)
   (ejs-number? value))
@@ -82,10 +84,8 @@
   (json-non-negative-integer? value))
 
 (define (acceptable-value-for-pattern? value)
-  (cond ((ejs-string? value)
-         (ecma-262-regexp? value))
-        (else
-         #f)))
+  (and (ejs-string? value)
+       (ecma-262-regexp? value)))
 
 (define (acceptable-value-for-items? value)
   (cond ((ejs-array? value)
@@ -122,31 +122,25 @@
        (members-unique? value)))
 
 (define (acceptable-value-for-properties? value)
-  (cond ((ejs-object? value)
-         (andmap json-schema? (object-values value)))
-        (else
-         #f)))
+  (and (ejs-object? value)
+       (andmap json-schema? (object-values value))))
 
 (define (acceptable-value-for-patternProperties? value)
-  (cond ((ejs-object? value)
-         (and (andmap ecma-262-regexp? (map symbol->string (object-properties value)))
-              (andmap json-schema? (object-values value))))
-        (else
-         #f)))
+  (and (ejs-object? value)
+       (andmap ecma-262-regexp? (map symbol->string (object-properties value)))
+       (andmap json-schema? (object-values value))))
 
 (define (acceptable-value-for-additionalProperties? value)
   (json-schema? value))
 
 (define (acceptable-value-for-dependencies? value)
-  (cond ((ejs-object? value)
-         (andmap (lambda (x)
-                   (or (json-schema? x)
-                       (and (ejs-array? x)
-                            (andmap ejs-string? x)
-                            (members-unique? x))))
-                 (object-values value)))
-        (else
-         #f)))
+  (and (ejs-object? value)
+       (andmap (lambda (x)
+                 (or (json-schema? x)
+                     (and (ejs-array? x)
+                          (andmap ejs-string? x)
+                          (members-unique? x))))
+               (object-values value))))
 
 (define (acceptable-value-for-propertyNames? value)
   (json-schema? value))
