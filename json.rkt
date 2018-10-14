@@ -46,7 +46,7 @@
          (hash-has-key? obj (string->symbol prop)))))
 
 (module+ test
-  (let-test ([obj (hasheq 'foo "bar")])
+  (let ([obj (hasheq 'foo "bar")])
     (check-true (ejs-object? obj))
     (check-true (has-property? obj 'foo))
     (check-true (has-property? obj "foo"))
