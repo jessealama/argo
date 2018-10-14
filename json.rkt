@@ -54,7 +54,7 @@
     (check-false (has-property? obj "bar"))))
 
 (define/contract (property-value obj prop)
-  (ejs-object? (or/c string? symbol?) . -> . boolean?)
+  (ejs-object? (or/c string? symbol?) . -> . ejsexpr?)
   (cond [(symbol? prop)
          (hash-ref obj prop)]
         [(string? prop)
