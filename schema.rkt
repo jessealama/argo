@@ -46,7 +46,7 @@
 	"null"))
 
 (define/contract (json-schema-type? thing)
-  (any . -> . boolean?)
+  (any/c . -> . boolean?)
   (and (string? thing)
        (list? (member thing json-schema-types string=?))))
 
