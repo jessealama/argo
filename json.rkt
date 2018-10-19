@@ -82,8 +82,11 @@
   (length (object-properties js)))
 
 (define/contract (has-type? data type)
-  (ejsexpr? string? . -> . boolean?)
+  (ejsexpr? (or/c string? (listof string?)) . -> . boolean?)
   (match type
+    [(? list?)
+     (ormap (lambda (t)
+              (has-type? data t)))]
     ["null"
      (ejs-null? data)]
     ["boolean"
