@@ -85,8 +85,8 @@
   (ejsexpr? (or/c string? (listof string?)) . -> . boolean?)
   (match type
     [(? list?)
-     (ormap (lambda (t)
-              (has-type? data t)))]
+     (ormap (lambda (t) (has-type? data t))
+            type)]
     ["null"
      (ejs-null? data)]
     ["boolean"
