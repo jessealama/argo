@@ -52,13 +52,11 @@
 
 (define/contract (acceptable-value-for-type? value)
   (ejsexpr? . -> . boolean?)
-  (cond ((ejs-string? value)
-         (json-schema-type? value))
-        ((ejs-array? value)
-         (and (members-unique? value)
-              (andmap json-schema-type? value)))
-        (else
-         #f)))
+  (or (and (ejs-string? value)
+           (json-schema-type? value))
+      (and (ejs-array? value)
+           (members-unique? value)
+           (andmap json-schema-type? value))))
 
 (define/contract (acceptable-value-for-multipleOf? value)
   (ejsexpr? . -> . boolean?)
