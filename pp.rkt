@@ -59,7 +59,7 @@
 
 (define (json-pretty-print js)
   (unless (ejsexpr? js)
-    (error "Not a jsepr? value."))
+    (error "Not a jsexpr? value."))
   (define (pp x level)
     (define (indent str)
       (indent-lines/str str level))
