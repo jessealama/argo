@@ -5,9 +5,6 @@
 (require (only-in (file "../../../util.rkt")
                   json-files-in-directory))
 
-(require (only-in (file "../../../parse.rkt")
-                  parse-json-file))
-
 (require (only-in (file "../../../schema.rkt")
                   json-schema?))
 

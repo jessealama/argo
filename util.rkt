@@ -10,7 +10,8 @@
          urls-equal?
          let-test let*-test
          peek-char/safe
-         read-char/safe)
+         read-char/safe
+         parse-json-string)
 
 (require br/define)
 
@@ -24,7 +25,8 @@
          (only-in racket/port
                   port->bytes)
          net/url-structs
-         net/url-string)
+         net/url-string
+         json)
 
 (module+ test
   (require rackunit))
@@ -261,3 +263,9 @@
   (input-port? . -> . (or/c eof-object? char? false/c))
   (with-handlers ([exn:fail? (const #f)])
     (read-char port)))
+
+(define/contract (parse-json-string s)
+  (-> string? (values jsexpr? boolean?))
+  (with-handlers ([exn:fail:read? (lambda (_)
+                                    (values #f #f))])
+    (values (string->jsexpr s) #t)))
