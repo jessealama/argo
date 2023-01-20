@@ -19,23 +19,23 @@
                   string-split
                   string-trim))
 
-(require ejs)
+(require json)
 
 (module+ test
   (require rackunit))
 
 (define (json-in-one-line js)
-  (unless (ejsexpr? js)
-    (error "Not a ejsexpr? value."))
-  (cond ((ejs-null? js)
+  (unless (jsexpr? js)
+    (error "Not a jsexpr? value."))
+  (cond ((eq? 'null js)
          "null")
-        ((ejs-number? js)
+        ((real? js)
          (format "~a" js))
-        ((ejs-boolean? js)
+        ((boolean? js)
          (if js "true" "false"))
-        ((ejs-string? js)
+        ((string? js)
          (format "~s" js))
-        ((ejs-array? js)
+        ((list? js)
          (let ([num-items (length js)]
                [items js])
            (if (= num-items 0)
@@ -52,7 +52,7 @@
                    ;; last item
                    (display (json-in-one-line (last items)))
                    (display "]"))))))
-            ((ejs-object? js)
+            ((hash? js)
              (let ([num-props (count-properties js)])
                (if (= num-props 0)
                    "{}"

@@ -9,29 +9,12 @@
          remove-property
          count-properties)
 
-(require (only-in (file "parse.rkt")
-                  parse-json-string)
-         (only-in (file "util.rkt")
-                  complain-and-die
-                  file-content/bytes
-                  bytes->string)
-         (only-in ejs
-                  ejsexpr?
-                  ejs-null?
-                  ejs-boolean?
-                  ejs-number?
-                  ejs-integer?
-                  ejs-string?
-                  ejs-array?
-                  ejs-object?)
-         (only-in racket/cmdline
-                  command-line)
+(require (file "util.rkt")
+         racket/cmdline
          racket/match
          racket/contract
-         (only-in racket/list
-                  empty?
-                  first
-                  rest))
+         racket/list
+         json)
 
 (module+ test
   (require rackunit))
@@ -39,7 +22,7 @@
 ;; constructors
 
 (define/contract (has-property? obj prop)
-  (ejs-object? (or/c symbol? string?) . -> . boolean?)
+  (hash? (or/c symbol? string?) . -> . boolean?)
   (cond ((symbol? prop)
          (hash-has-key? obj prop))
         ((string? prop)
@@ -47,60 +30,60 @@
 
 (module+ test
   (let ([obj (hasheq 'foo "bar")])
-    (check-true (ejs-object? obj))
+    (check-true (hash? obj))
     (check-true (has-property? obj 'foo))
     (check-true (has-property? obj "foo"))
     (check-false (has-property? obj 'bar))
     (check-false (has-property? obj "bar"))))
 
 (define/contract (property-value obj prop)
-  (ejs-object? (or/c string? symbol?) . -> . ejsexpr?)
+  (hash? (or/c string? symbol?) . -> . jsexpr?)
   (cond [(symbol? prop)
          (hash-ref obj prop)]
         [(string? prop)
          (hash-ref obj (string->symbol prop))]))
 
 (define/contract (object-properties obj)
-  (ejs-object? . -> . (listof symbol?))
+  (hash? . -> . (listof symbol?))
   (hash-keys obj))
 
 (define/contract (object-values obj)
-  (ejs-object? . -> . (listof ejsexpr?))
+  (hash? . -> . (listof jsexpr?))
   (hash-values obj))
 
 (define/contract (json-non-negative-integer? x)
-  (ejsexpr? . -> . boolean?)
-  (and (ejs-integer? x)
+  (jsexpr? . -> . boolean?)
+  (and (integer? x)
        (<= 0 x)))
 
 (define/contract (remove-property jsobj prop)
-  (ejs-object? symbol? . -> . ejs-object?)
+  (hash? symbol? . -> . hash?)
   (hash-remove jsobj prop))
 
 (define/contract (count-properties js)
-  (ejs-object? . -> . exact-nonnegative-integer?)
+  (hash? . -> . exact-nonnegative-integer?)
   (length (object-properties js)))
 
 (define/contract (has-type? data type)
-  (ejsexpr? (or/c string? (listof string?)) . -> . boolean?)
+  (jsexpr? (or/c string? (listof string?)) . -> . boolean?)
   (match type
     [(? list?)
      (ormap (lambda (t) (has-type? data t))
             type)]
     ["null"
-     (ejs-null? data)]
+     (eq? 'null data)]
     ["boolean"
-     (ejs-boolean? data)]
+     (boolean? data)]
     ["number"
-     (ejs-number? data)]
+     (number? data)]
     ["integer"
-     (ejs-integer? data)]
+     (integer? data)]
     ["object"
-     (ejs-object? data)]
+     (hash? data)]
     ["array"
-     (ejs-array? data)]
+     (list? data)]
     ["string"
-     (ejs-string? data)]
+     (string? data)]
     [else
      (error "Unknown JSON data type: " type)]))
 
@@ -124,9 +107,7 @@
   (when (eq? json/string #f)
     (complain-and-die (format "Contents of \"~a\" cannot be interpreted as a UTF-8 string." json-path)))
 
-  (define-values (json/jsexpr json-well-formed?)
-    (parse-json-string json/string))
-
-  (exit (if json-well-formed?
-            0
-            1)))
+  (with-handlers ([exn:fail:read? (lambda (e)
+                                    (exit 1))])
+    (string->jsexpr json/string)
+    (exit 0)))

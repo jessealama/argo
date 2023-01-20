@@ -2,7 +2,7 @@
 
 (define collection "argo")
 
-(define version "1.4.4")
+(define version "2.0.0")
 
 (define deps
   '("base"
@@ -13,7 +13,6 @@
     "web-server-lib"
     "json-pointer"
     "uri-template"
-    "ejs"
     "brag"))
 
 (define build-deps
@@ -24,7 +23,7 @@
 
 (define pkg-desc "JSON Schema validator")
 
-(define pkg-authors '("jesse@lisp.sh"))
+(define pkg-authors '("jesse@serverracket.com"))
 
 (define scribblings '(("scribblings/argo.scrbl" ())))
 

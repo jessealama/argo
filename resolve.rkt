@@ -3,15 +3,12 @@
 (module+ test
   (require rackunit))
 
-(require (only-in (file "parse.rkt")
-                    parse-json-string
-                    parse-json-url))
-
 (require (only-in (file "parameters.rkt")
                   original-schema
                   current-id))
 
 (require net/url-structs)
+(require net/http-easy)
 
 (require (only-in net/url
                   string->url
@@ -25,7 +22,10 @@
                   json-pointer-value))
 
 (require (only-in (file "util.rkt")
-                  url-has-only-fragment?))
+                  url-has-only-fragment?
+                  parse-json-string))
+
+(require "equal.rkt")
 
 (define (resolve-ref-wrt-id ref id)
   (cond ((string? id)
@@ -77,14 +77,14 @@
                          (struct-copy url
                                       ref
                                       [fragment #f]))
-                       (define-values (schema well-formed?)
-                         (parse-json-url url-w/o-fragment))
-                       (cond ((not well-formed?)
-                              (values #f #f))
-                             ((string? fragment)
-                              (values (json-pointer-value fragment schema) #f))
-                             (else
-                              (values schema #t))))))
+                       (define res (get ref))
+                       (with-handlers ([exn:fail? (lambda (e)
+                                                    (values #f #f))])
+                         (define schema (response-json res))
+                         (cond ((string? fragment)
+                                (values (json-pointer-value fragment schema) #f))
+                               (else
+                                (values schema #t)))))))
                (else
                 (error "ref should be either a string or a URL." ref))))))
 
@@ -106,8 +106,6 @@ SCHEMA
   ))
 
 (module+ test
-  (require (only-in ejs
-                    equal-ejsexprs?))
   (define-values (geo/jsexp geo-ok?)
     (parse-json-string geo/str))
   (check-true geo-ok?)
@@ -118,7 +116,7 @@ SCHEMA
   ;; (define-values (resolved-geo resolved-ok?)
   ;;   (resolve-schema-wrt-id "http://json-schema.org/geo" #f (hasheq)))
   ;; (check-true resolved-ok?)
-  ;; (check-true (equal-ejsexprs? resolved-geo geo/jsexp))
+  ;; (check-true (equal-jsexprs? resolved-geo geo/jsexp))
   )
 
 (module+ test
@@ -173,4 +171,4 @@ FULL_SCHEMA
   (define-values (resolved-value resolved?)
     (resolve-schema-wrt-id "#/definitions/address" #f full-schema/jsexpr))
   (check-true resolved?)
-  (check-true (equal-ejsexprs? resolved-value address/jsexpr)))
+  (check-true (equal-jsexprs? resolved-value address/jsexpr)))

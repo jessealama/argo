@@ -5,9 +5,7 @@
          check-json/schema
          json-pretty-print
          json-in-one-line
-         parse-json
-         ejsexpr?
-         ejsexpr->string)
+         parse-json)
 
 (require (only-in (file "./schema.rkt")
                   json-schema?))
@@ -18,11 +16,7 @@
                   json-pretty-print))
 (require (only-in (file "./oneline.rkt")
                   json-in-one-line))
-(require (only-in (file "./parse.rkt")
-                  parse-json))
-(require (only-in ejs
-                  ejsexpr->string
-                  ejsexpr?))
+(require (file "./parse.rkt"))
 
 ;; Checking at the command line
 
@@ -30,9 +24,7 @@
   (require racket/cmdline
            (only-in (file "util.rkt")
                     file-content/bytes
-                    bytes->string)
-           (only-in (file "parse.rkt")
-                    parse-json-string))
+                    bytes->string))
   (define quiet-mode (make-parameter #f))
   (define-values (schema-path instance-path)
     (command-line

@@ -4,13 +4,10 @@
                   file-content/bytes
                   bytes->string
                   complain-and-die))
-(require (only-in (file "parse.rkt")
-                  parse-json-string
-                  parse-json-file))
 (require (only-in (file "schema.rkt")
                   json-schema?))
-(require (only-in ejs
-                  equal-ejsexprs?))
+(require (only-in (file "equal.rkt")
+                  equal-jsexprs?))
 (require (only-in (file "validate.rkt")
                   adheres-to-schema?))
 (require (only-in json-pointer
@@ -20,6 +17,7 @@
                   json-pretty-print))
 (require (only-in (file "oneline.rkt")
                   json-in-one-line))
+(require (file "parse.rkt"))
 (require (only-in racket/cmdline
                   command-line))
 (require (only-in racket/vector
@@ -132,7 +130,7 @@ support     how to support Argo development")))
   (unless instance-2-well-formed?
     (complain-and-die (format "\"~a\" is malformed JSON."
                               instance-path-2)))
-  (define equal-json? (equal-ejsexprs? instance-1-jsexpr instance-2-jsexpr))
+  (define equal-json? (equal-jsexprs? instance-1-jsexpr instance-2-jsexpr))
   (cond ((quiet-mode?)
          (exit (if equal-json? 0 1)))
         (else

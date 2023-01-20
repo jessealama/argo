@@ -1,14 +1,16 @@
 #lang racket/base
 
+(require racket/contract)
+
 (require (only-in (file "./json.rkt")
                   count-properties
                   object-properties
                   property-value))
 
-(require ejs)
-
 (require (only-in racket/port
                   with-output-to-string))
+
+(require json)
 
 (require (only-in racket/list
                   take
@@ -57,22 +59,21 @@
   (indent-lines/list (explode-lines str)
                      indentation))
 
-(define (json-pretty-print js)
-  (unless (ejsexpr? js)
-    (error "Not a jsexpr? value."))
+(define/contract (json-pretty-print js)
+  (-> jsexpr? string?)
   (define (pp x level)
     (define (indent str)
       (indent-lines/str str level))
     (let ([pad (make-pad level)])
-      (cond ((ejs-null? x)
+      (cond ((eq? 'null x)
              "null")
-            ((ejs-number? x)
+            ((real? x)
              (format "~a" x))
-            ((ejs-boolean? x)
+            ((boolean? x)
              (if x "true" "false"))
-            ((ejs-string? x)
+            ((string? x) x
              (format "~s" x))
-            ((ejs-array? x)
+            ((list? x)
              (let ([num-items (length x)]
                    [items x])
                (if (= num-items 0)
@@ -92,7 +93,7 @@
                        (display (indent-lines/str (pp (last items) 0) 1))
                        (newline)
                        (display "]"))))))
-            ((ejs-object? x)
+            ((hash? x)
              (let ([num-props (count-properties x)])
                (if (= num-props 0)
                    "{}"
@@ -123,9 +124,7 @@
                                                  #:right? #f
                                                  #:repeat? #t))))
                        (newline)
-                       (display "}"))))))
-            (else
-             (error "Unhandled JSON data:" x)))))
+                       (display "}")))))))))
   (pp js 0))
 
 (provide json-pretty-print)
