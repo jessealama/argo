@@ -8,6 +8,7 @@
   '("base"
     "rackunit-lib"
     "http"
+    "http-easy"
     "sugar"
     "beautiful-racket-lib"
     "web-server-lib"
